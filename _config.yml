@@ -1,0 +1,10 @@
+title: Microsoft Build 2026 — The Announcements
+description: A beautifully organized recap of every major announcement from Microsoft Build 2026.
+theme: null
+plugins: []
+# Disable Jekyll processing of the assets folder so paths stay stable
+include:
+  - assets
+exclude:
+  - README.md
+  - .gitignore
