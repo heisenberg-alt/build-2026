@@ -51,9 +51,9 @@
           </div>
           <h1 class="post__title">ACS is the most important Build announcement nobody noticed</h1>
           <p class="post__deck">
-            Frontier models get the headlines. Open contracts get the install base. The Agent Control
-            Specification is the part of Build that lines up most directly with Microsoft's Responsible
-            AI Standard — and the one I think history will judge most kindly.
+            Frontier models get the headlines. Open contracts get the install base. ACS is the policy
+            plane for agents, sitting alongside identity (Entra) and tools (MCP) — and it is the Build
+            announcement I expect to outlast every product demo on either stage.
           </p>
           <p class="post__byline">
             By <strong>Heisenberg</strong>
@@ -67,18 +67,19 @@
         <p class="post__lede">
           Tucked between Frontier Tuning and the Agent Optimization Loop on Day 2, Microsoft published
           the <strong>Agent Control Specification (ACS)</strong> — a vendor-neutral spec for runtime
-          agent governance. For me, this is the announcement that lines up most directly with
-          Microsoft's <em>Responsible AI Standard</em>, and the one I think history will judge most
-          kindly. It's also the strongest recent signal that Microsoft sees agent trust as an
-          ecosystem problem, not a single-vendor one.
+          agent governance. An agent platform needs three planes: identity (who the agent is acting as),
+          tools (what it can call), and policy (what it is permitted to do, by whom, with what
+          evidence). Entra gives us the first. MCP gave us the second. ACS is the third — and that is
+          why I expect it to outlast every product demo on either stage.
         </p>
 
         <h2>What Microsoft announced</h2>
         <p>
-          ACS is a published, open specification with a reference implementation in both Foundry and
-          the Copilot app on day one. It covers the four messy middles of every agent deployment so
-          far: what the agent is allowed to do, who needs to approve sensitive actions, what data it's
-          allowed to touch, and how every step is audited.
+          ACS is a published, open specification with reference implementations in Foundry and the
+          Copilot app on day one. It addresses the four questions every agent deployment has had to
+          answer in an ad-hoc way so far: what the agent is allowed to do, who must approve sensitive
+          actions, what data it is allowed to touch, and what evidence each step leaves behind. Until
+          now, every team has answered those questions in its own YAML.
         </p>
         <ul class="post__bullets">
           <li>Declarative manifest of the agent's capabilities and tools</li>
@@ -90,40 +91,43 @@
 
         <h2>Why it lines up with Microsoft's direction</h2>
         <p>
-          Microsoft's six Responsible AI principles — fairness, reliability and safety, privacy and
-          security, inclusiveness, transparency, and accountability — only mean something if engineers
-          have a place to express them in code. ACS is that place for agents. It takes principles that
-          have lived in policy documents and turns them into a manifest that runtimes can enforce
-          uniformly.
+          Microsoft's Responsible AI principles — fairness, reliability and safety, privacy and
+          security, inclusiveness, transparency, and accountability — are only useful when engineers
+          have a place to express them in code that a runtime can enforce. ACS is that place for agents.
+          Capability scopes, approval hooks, data-residency boundaries, and a portable audit log are the
+          engineering primitives those principles need in order to leave policy documents and become
+          behaviour.
         </p>
         <p>
-          It also continues a pattern Microsoft has been quietly executing for years: open-source the
-          contract, ship the best reference, and let the ecosystem build on top. The Language Server
-          Protocol did it for editors. OpenAPI did it for APIs. MCP did it for tools. ACS is the same
-          playbook for agent governance — which is exactly the surface where a single vendor's policy
-          file would be the worst possible outcome.
+          ACS also follows a playbook Microsoft has executed before, more than once. The Language Server
+          Protocol did it for editors. OpenAPI did it for HTTP APIs. MCP did it for tools. Each time,
+          the same shape: publish the contract under a permissive license, ship the best reference
+          implementation, then compete on substrate rather than lock-in. Governance is exactly the
+          surface where a single vendor's private file format would be the least acceptable outcome to
+          the buyers who matter most — and Microsoft, this time, did not try to make ACS one.
         </p>
 
         <aside class="post__take">
           <h3>My take</h3>
           <p>
-            The part that made me sit up: ACS isn't trying to be Microsoft's policy layer with extra
-            YAML. It's trying to be the contract that makes governance portable across Foundry,
-            Copilot, Windows, and whatever third-party runtime you adopt next. That's a much more
-            generous posture than the market expected, and it's the right one if you actually believe
-            agents will outlive any single vendor's runtime.
+            The detail that matters most to me: ACS is not Microsoft's policy file dressed in spec
+            clothing. It is the contract that lets a single governance posture follow an agent across
+            Foundry, Copilot, Windows, and whichever third-party runtime an organization adopts next.
+            The first ten minutes of any production agent incident are spent reconstructing who approved
+            what, against which policy, on which runtime. A portable, runtime-agnostic audit log is the
+            artifact that shortens those minutes.
           </p>
           <p>
-            For Microsoft, this is also a credibility play — and a welcome one. The last few years
-            have made it clear that the company wants to be the trusted home for enterprise AI, and
-            trust isn't a marketing surface, it's an engineering one. ACS is the strongest signal yet
-            that Microsoft understands the difference, and is willing to invest in the open contracts
-            that earn that trust over time.
+            The strategic reading is just as direct. Microsoft has spent the past few years positioning
+            as the trusted home for enterprise AI, and trust is an engineering surface before it is a
+            marketing one. ACS is the clearest signal yet that the company understands the difference,
+            and is willing to invest in the open contracts — not just the closed product — that earn
+            that trust over time.
           </p>
         </aside>
 
         <p class="post__signoff">
-          — <strong>Heisenberg</strong>, 4 June 2026 · specs rarely make highlight reels, but they're often what's left standing five years later.
+          — <strong>Heisenberg</strong>, 4 June 2026.
         </p>
 
         <div class="post__source">
