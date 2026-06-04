@@ -4,6 +4,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── AI & AGENTS ─────────────────
   {
     id: 'mai-models',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft AI',
     title: 'Seven new MAI models',
@@ -28,6 +29,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'foundry-iq',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft Foundry',
     title: 'Foundry IQ',
@@ -48,6 +50,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'web-iq',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft AI',
     title: 'Microsoft Web IQ',
@@ -68,6 +71,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'foundry-agents',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft Foundry',
     title: 'Build and run agents at scale',
@@ -88,6 +92,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'foundry-models',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft Foundry',
     title: 'Model lifecycle management',
@@ -108,6 +113,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'foundry-deploy',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft Foundry',
     title: 'Deploy AI agents effectively',
@@ -128,6 +134,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'autopilots',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft AI',
     title: 'Introducing Autopilots',
@@ -148,6 +155,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'project-solara',
+    day: 1,
     cat: 'ai',
     tagLabel: 'Microsoft AI',
     title: 'Project Solara',
@@ -170,6 +178,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── INFRASTRUCTURE ─────────────────
   {
     id: 'cobalt-200',
+    day: 1,
     cat: 'infra',
     tagLabel: 'Azure',
     title: 'Azure Cobalt 200 VMs',
@@ -190,6 +199,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'rayfin',
+    day: 1,
     cat: 'infra',
     tagLabel: 'Azure',
     title: 'Rayfin',
@@ -212,6 +222,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── DATA ─────────────────
   {
     id: 'horizon-db',
+    day: 1,
     cat: 'data',
     tagLabel: 'Azure Databases',
     title: 'Azure HorizonDB',
@@ -232,6 +243,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'cosmos-agents',
+    day: 1,
     cat: 'data',
     tagLabel: 'Azure Cosmos DB',
     title: 'Agentic toolkits for Cosmos DB',
@@ -252,6 +264,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'fabric-gpu-dw',
+    day: 1,
     cat: 'data',
     tagLabel: 'Microsoft Fabric',
     title: 'GPU-accelerated Fabric warehouse',
@@ -272,6 +285,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'fabric-databases-agents',
+    day: 1,
     cat: 'data',
     tagLabel: 'Fabric · Databases',
     title: 'Agentic apps with Fabric & Databases',
@@ -293,6 +307,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── WINDOWS & DEVICES ─────────────────
   {
     id: 'windows-trusted-dev',
+    day: 1,
     cat: 'windows',
     tagLabel: 'Windows',
     title: 'Windows as the trusted dev platform',
@@ -313,6 +328,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'github-copilot-app',
+    day: 1,
     cat: 'windows',
     tagLabel: 'GitHub Copilot',
     title: 'GitHub Copilot app for Windows',
@@ -333,6 +349,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'openclaw',
+    day: 1,
     cat: 'windows',
     tagLabel: 'Windows · Open source',
     title: 'OpenClaw + Windows',
@@ -353,6 +370,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'surface-rtx-spark',
+    day: 1,
     cat: 'windows',
     tagLabel: 'Surface',
     title: 'Surface RTX Spark Dev Box',
@@ -375,6 +393,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── QUANTUM ─────────────────
   {
     id: 'majorana-2',
+    day: 1,
     cat: 'quantum',
     tagLabel: 'Quantum',
     title: 'Majorana 2 quantum chip',
@@ -397,6 +416,7 @@ window.BUILD_2026_DATA = [
   // ───────────────── STORAGE ─────────────────
   {
     id: 'managed-file-shares-ga',
+    day: 1,
     cat: 'storage',
     tagLabel: 'Azure Storage',
     title: 'Managed File Shares — now GA',
@@ -417,6 +437,7 @@ window.BUILD_2026_DATA = [
   },
   {
     id: 'azure-files-mac',
+    day: 1,
     cat: 'storage',
     tagLabel: 'Azure Storage',
     title: 'Azure Files on macOS with Entra ID',
@@ -434,5 +455,206 @@ window.BUILD_2026_DATA = [
     `,
     why: 'Closing the last gap in cross-platform identity for storage — and improving security posture for every Mac shop.',
     link: 'https://aka.ms/azurefilesmacos'
+  },
+
+  // ═════════════════════════════════════════════════════════════════
+  // ▼ DAY 2 — June 3, 2026 · Developer deep dives & technical breakouts
+  // ═════════════════════════════════════════════════════════════════
+
+  // ───────────────── AI & AGENTS (Day 2) ─────────────────
+  {
+    id: 'microsoft-scout',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Microsoft AI',
+    title: 'Microsoft Scout',
+    subtitle: 'Always-on, enterprise-secure personal agent',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7304-scaled.jpg',
+    preview: 'Omar Shahine and Jakob Werner detail how Project Lobster grew into Microsoft Scout — a persistent, on-device personal agent built on OpenClaw with enterprise-grade security from day one.',
+    details: `
+      <p><strong>Microsoft Scout</strong> is a persistent personal agent that runs alongside you across apps and devices. Born from the internal "Project Lobster" effort, it pairs the <em>OpenClaw</em> sandbox with a memory layer, identity, and policy controls so it can act on your behalf without giving up enterprise security.</p>
+      <ul>
+        <li>Continuous, low-friction context capture across your workday</li>
+        <li>Capability-scoped tool execution via OpenClaw</li>
+        <li>Per-user memory with org-controlled retention and audit</li>
+        <li>Built to be enterprise-ready, not retrofitted</li>
+      </ul>
+    `,
+    why: 'Personal agents only work if IT can trust them. Scout is the first plausible answer to that — security, identity, and governance baked in, not bolted on.',
+    link: 'https://commandline.microsoft.com/project-lobster-openclaw-personal-ai-assistant-enterprise-secure/'
+  },
+  {
+    id: 'frontier-tuning',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Microsoft AI',
+    title: 'Frontier Tuning',
+    subtitle: 'Participate at the frontier — don\'t just consume it',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7214-1024x683.jpg',
+    preview: 'A new capability that lets organizations customize MAI frontier models with their own data and objectives — moving from "API consumer" to "frontier participant".',
+    details: `
+      <p><strong>Frontier Tuning</strong> opens up the MAI model family to deep customization. Instead of fine-tuning a smaller derivative, organizations can shape the behavior of the frontier model itself against proprietary data, evaluations, and reward signals — with full lifecycle tooling from Foundry.</p>
+      <ul>
+        <li>SFT, DPO, and RFT pipelines for frontier MAI models</li>
+        <li>Private model variants with isolated weights and evals</li>
+        <li>Continuous improvement using production traces</li>
+        <li>Integrated with the Foundry model lifecycle stack</li>
+      </ul>
+    `,
+    why: 'The center of gravity is shifting from "which model do I call?" to "which model is mine." Frontier Tuning is how that transition happens.',
+    link: 'https://www.linkedin.com/posts/satyanadella_with-the-new-mai-models-and-frontier-tuning-activity-7467758064843153408-NguP'
+  },
+  {
+    id: 'agent-optimization-loop',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Microsoft Foundry',
+    title: 'The Agent Optimization Loop',
+    subtitle: 'Closed-loop self-improvement for agents in Foundry',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7003-scaled.jpg',
+    preview: 'A deep dive on how Foundry reframed agent quality as an optimization problem — and built a closed loop that turns production traces into automatic agent improvements.',
+    details: `
+      <p>The Foundry team reframed the central challenge of agent quality from "tune your prompt" to "close the loop." The new <strong>Agent Optimization Loop</strong> mines production traces, scores them against task-specific graders, and produces concrete, testable improvements to instructions, tools, and routing — automatically.</p>
+      <ul>
+        <li>Trace-derived datasets curated on the fly</li>
+        <li>Multi-objective graders (quality, cost, latency, safety)</li>
+        <li>Candidate diffs tested against held-out evals before promotion</li>
+        <li>Native integration with Foundry deployments</li>
+      </ul>
+    `,
+    why: 'Agents drift. Without a feedback loop, they get worse over time, not better. This is the missing piece between "deployed" and "improving".',
+    link: 'https://commandline.microsoft.com/the-agent-optimization-loop-and-how-we-built-it-in-foundry/'
+  },
+  {
+    id: 'assert',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Open source',
+    title: 'ASSERT',
+    subtitle: 'Turn written specs into executable evals',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7107-scaled.jpg',
+    preview: 'Adaptive Spec-driven Scoring for Evaluation and Regression Testing — a new open-source framework that converts natural-language behavior requirements into runnable evals for any model or agent.',
+    details: `
+      <p><strong>ASSERT</strong> (Adaptive Spec-driven Scoring for Evaluation and Regression Testing) is an open-source framework that compiles natural-language behavioral specifications into deterministic, executable evals. Write what your agent <em>should</em> do; ASSERT generates the test cases, graders, and regression suite to prove it does.</p>
+      <ul>
+        <li>Spec → eval compilation with adaptive case generation</li>
+        <li>Provider-agnostic graders (LLM-judge, rule-based, hybrid)</li>
+        <li>Regression detection across model and prompt versions</li>
+        <li>Works with any agent or model — Foundry, OpenAI, Anthropic, local</li>
+      </ul>
+    `,
+    why: 'Evals are the new tests. ASSERT lowers the activation energy of writing them from days to minutes — and makes them part of every PR.',
+    link: 'https://commandline.microsoft.com/assert-written-intent-executable-evals/'
+  },
+  {
+    id: 'agent-control-spec',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Open standard',
+    title: 'Agent Control Specification (ACS)',
+    subtitle: 'Portable runtime governance for AI agents',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5127-1024x683.jpg',
+    preview: 'A new open spec that lets agents declare — and runtimes enforce — what they\'re allowed to do, who can approve sensitive actions, and how to audit every step.',
+    details: `
+      <p><strong>Agent Control Specification (ACS)</strong> is a vendor-neutral standard for runtime agent governance. Agents publish an ACS manifest declaring their capabilities, required approvals, data boundaries, and audit hooks; any compliant runtime — Foundry, Copilot, Windows, third-party — enforces them uniformly.</p>
+      <ul>
+        <li>Declarative capability and permission manifest</li>
+        <li>Per-action approval flows with human-in-the-loop hooks</li>
+        <li>Portable across runtimes — write once, run governed</li>
+        <li>Built on existing identity and policy primitives</li>
+      </ul>
+    `,
+    why: 'Agents will outlive any one platform. ACS is the contract that lets governance travel with them — the way OAuth did for identity.',
+    link: 'https://commandline.microsoft.com/agent-control-specification-runtime-governance/'
+  },
+  {
+    id: 'microsoft-discovery-ga',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Healthcare & Science AI',
+    title: 'Microsoft Discovery — GA',
+    subtitle: 'Agentic platform for scientific R&D — generally available',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A4903-1024x683.jpg',
+    preview: 'Microsoft Discovery is now generally available, with a new Discovery app in preview — bringing governed, agentic AI workflows to materials science, drug discovery, and frontier research.',
+    details: `
+      <p><strong>Microsoft Discovery</strong> reaches general availability with the new Discovery app in preview. It\'s a comprehensive platform for building and governing agentic AI workflows in R&D — combining domain-specific models, simulation, and lab automation under one governed roof. Mayo Clinic is co-developing a frontier AI model for healthcare on top of it.</p>
+      <ul>
+        <li>Agentic workflows for materials, biotech, and chemistry</li>
+        <li>Discovery app preview — purpose-built UX for researchers</li>
+        <li>Integrated with Foundry models, evaluations, and governance</li>
+        <li>Mayo Clinic frontier healthcare AI model co-developed on Discovery</li>
+      </ul>
+    `,
+    why: 'Discovery moves agentic AI out of office productivity and into the lab — where the payoff is measured in years of research compressed into weeks.',
+    link: 'https://azure.microsoft.com/en-us/blog/announcing-microsoft-discovery-general-availability-and-microsoft-discovery-app-preview/'
+  },
+
+  // ───────────────── INFRASTRUCTURE (Day 2) ─────────────────
+  {
+    id: 'confidential-live-migration',
+    day: 2,
+    cat: 'infra',
+    tagLabel: 'Azure Confidential Computing',
+    title: 'Confidential Live Migration with Intel TDX',
+    subtitle: 'Move running confidential VMs without breaking the seal',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5567-1024x683.jpg',
+    preview: 'Azure becomes the first major cloud to support live migration of Intel TDX confidential VMs — letting you move workloads for maintenance and balancing without losing memory encryption or attestation.',
+    details: `
+      <p>Azure announces <strong>Confidential Live Migration with Intel TDX</strong>: the ability to move running TDX-protected VMs between hosts while preserving memory encryption, attestation state, and the confidential trust boundary throughout the migration. The result — planned maintenance and host balancing without downtime, and without breaking the confidential seal.</p>
+      <ul>
+        <li>Live migration for Intel TDX confidential VMs</li>
+        <li>Memory remains encrypted in transit</li>
+        <li>Attestation continuity across source and destination</li>
+        <li>Transparent to guest workloads</li>
+      </ul>
+    `,
+    why: 'Confidential compute used to mean accepting downtime for every host event. This removes that tradeoff — confidentiality and operability, at the same time.',
+    link: 'https://techcommunity.microsoft.com/blog/azureconfidentialcomputingblog/announcing-confidential-live-migration-in-azure/4524558'
+  },
+
+  // ───────────────── WINDOWS & DEVICES (Day 2) ─────────────────
+  {
+    id: 'copilot-app-agent-native',
+    day: 2,
+    cat: 'windows',
+    tagLabel: 'GitHub Copilot',
+    title: 'GitHub Copilot app: the agent-native desktop',
+    subtitle: 'Engineering deep dive — how agents work the way you already work',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/GitHubCopilotApp_PRView_Windows_wBackground-1024x618.jpg',
+    preview: 'GitHub\'s engineering deep dive on the Copilot app — the surfaces, the protocols, and how MCP, ACS, and OpenClaw come together to make agents feel native to the desktop.',
+    details: `
+      <p>A technical look from the GitHub team at the new <strong>Copilot app for Windows and macOS</strong>: how it indexes your workspace, talks to agents via MCP, governs actions through ACS, executes them via OpenClaw, and surfaces results back where you already work — VS Code, the terminal, the browser, and the OS shell.</p>
+      <ul>
+        <li>Workspace indexing with local-first privacy</li>
+        <li>MCP-based tool surface for any agent</li>
+        <li>ACS-governed actions with per-tool consent</li>
+        <li>Hand-offs between local and hosted agents</li>
+      </ul>
+    `,
+    why: 'The keynote showed the magic. This is the architecture that makes it boring enough to ship — and to depend on.',
+    link: 'https://github.blog/news-insights/product-news/github-copilot-app-the-agent-native-desktop-experience/'
+  },
+
+  // ───────────────── PLATFORM (Day 2 — agent-first OS deep dive) ─────────────────
+  {
+    id: 'solara-platform-deep-dive',
+    day: 2,
+    cat: 'ai',
+    tagLabel: 'Project Solara',
+    title: 'Composing a new platform for agent-first devices',
+    subtitle: 'Engineering deep dive on Project Solara',
+    img: 'https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5470-1024x683.jpg',
+    preview: 'The Solara team unpacks the architecture of an agent-first device platform — how local and cloud models, memory, identity, and tool execution compose into a coherent OS.',
+    details: `
+      <p>A deeper engineering view of <strong>Project Solara</strong>: the platform layers that compose into an agent-first device experience. Covers the local inference plane, durable memory, identity-bound capabilities, the MCP/ACS/OpenClaw triad for tools and governance, and the cloud-burst path for frontier-model tasks.</p>
+      <ul>
+        <li>Local-first inference plane with NPU/GPU offload</li>
+        <li>Per-user durable memory with consent boundaries</li>
+        <li>Capability-bound tool execution shared with Windows</li>
+        <li>Cloud-burst handoff to Foundry for frontier tasks</li>
+      </ul>
+    `,
+    why: 'Day 1 showed Solara\'s vision. Day 2 shows the seams — and whether the platform underneath can actually carry it.',
+    link: 'https://commandline.microsoft.com/project-solara-build-2026/'
   }
 ];

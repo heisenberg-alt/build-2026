@@ -31,6 +31,8 @@
       </a>
       <div class="nav__links">
         <a href="#featured">Featured</a>
+        <a href="#days">Days</a>
+        <a href="#takes">Takes</a>
         <a href="#announcements">Announcements</a>
         <a href="#keynote">Keynote</a>
         <a href="#gallery">Gallery</a>
@@ -59,16 +61,17 @@
     <div class="hero__content">
       <div class="hero__badge">
         <span class="hero__pulse"></span>
-        San Francisco · June 2026
+        San Francisco · June 2-3, 2026
       </div>
       <h1 class="hero__title">
         <span class="hero__title-line">Microsoft</span>
         <span class="hero__title-line hero__title-line--gradient">Build 2026</span>
       </h1>
       <p class="hero__subtitle">
-        The system running AI is changing everything. Here's every major announcement
-        from the keynote — from <strong>Majorana 2</strong> quantum to <strong>seven new MAI models</strong>,
-        <strong>Cobalt 200 VMs</strong>, <strong>Foundry IQ</strong>, and the agent-first future of Windows.
+        Two days. One story about the system running AI. Day&nbsp;1 brought the keynote bombshells —
+        <strong>Majorana&nbsp;2</strong>, <strong>seven new MAI models</strong>, <strong>Cobalt&nbsp;200</strong>, <strong>Foundry&nbsp;IQ</strong>.
+        Day&nbsp;2 brought the developer deep dives — <strong>Microsoft Scout</strong>, <strong>Frontier Tuning</strong>,
+        <strong>ASSERT</strong>, and the <strong>Agent Control Specification</strong>.
       </p>
       <div class="hero__actions">
         <a href="#announcements" class="btn btn--primary">Explore announcements</a>
@@ -79,7 +82,7 @@
       </div>
       <div class="hero__stats">
         <div class="hero__stat">
-          <span class="hero__stat-value"><span class="hero__stat-num" data-count="21">0</span></span>
+          <span class="hero__stat-value"><span class="hero__stat-num" data-count="30">0</span></span>
           <span class="hero__stat-label">Announcements</span>
         </div>
         <div class="hero__stat">
@@ -91,8 +94,8 @@
           <span class="hero__stat-label">Faster Cobalt VMs</span>
         </div>
         <div class="hero__stat">
-          <span class="hero__stat-value"><span class="hero__stat-num" data-count="6">0</span></span>
-          <span class="hero__stat-label">Major Categories</span>
+          <span class="hero__stat-value"><span class="hero__stat-num" data-count="2">0</span></span>
+          <span class="hero__stat-label">Days · Jun 2-3</span>
         </div>
       </div>
     </div>
@@ -145,6 +148,128 @@
     </div>
   </section>
 
+  <!-- ───────────────────────── Two-day overview ───────────────────────── -->
+  <section class="section section--days" id="days">
+    <div class="container">
+      <div class="section__head">
+        <span class="section__eyebrow">Two days, one story</span>
+        <h2 class="section__title">The keynote, then the deep dives</h2>
+        <p class="section__lead">
+          Day&nbsp;1 was the show — the keynote stage, the hero demos, the partner moments. Day&nbsp;2 was the homework —
+          engineering deep dives, open-source releases, and the platform plumbing that makes Day&nbsp;1 actually ship.
+          Tap a day to filter the full list below.
+        </p>
+      </div>
+
+      <div class="days-grid">
+        <article class="day-card day-card--1" data-jump-day="1" tabindex="0" role="button" aria-label="Filter announcements to Day 1">
+          <header class="day-card__head">
+            <span class="day-card__chip"><span class="day-dot day-dot--1"></span>Day 1 · Tue Jun 2</span>
+            <h3 class="day-card__title">Keynote &amp; flagship reveals</h3>
+            <p class="day-card__lead">
+              Satya, Mustafa, Rajesh, Asha and Pavan walk through the system running AI — from atoms to agents.
+            </p>
+          </header>
+          <ul class="day-card__bullets">
+            <li><strong>Quantum:</strong> Majorana 2 — the first reliable topological qubit chip</li>
+            <li><strong>Models:</strong> Seven new MAI models including MAI-Reasoning and MAI-Vision</li>
+            <li><strong>Silicon:</strong> Cobalt 200 VMs — 50% faster Arm in Azure</li>
+            <li><strong>Agents:</strong> Foundry IQ, Web IQ, autopilots, and Project Solara</li>
+            <li><strong>Windows:</strong> The GitHub Copilot app and trusted developer mode</li>
+          </ul>
+          <footer class="day-card__foot">
+            <span class="day-card__count"><strong data-day-count-card="1">21</strong> announcements</span>
+            <span class="day-card__cta">Filter to Day 1 ↓</span>
+          </footer>
+        </article>
+
+        <article class="day-card day-card--2" data-jump-day="2" tabindex="0" role="button" aria-label="Filter announcements to Day 2">
+          <header class="day-card__head">
+            <span class="day-card__chip"><span class="day-dot day-dot--2"></span>Day 2 · Wed Jun 3</span>
+            <h3 class="day-card__title">Developer deep dives &amp; deltas</h3>
+            <p class="day-card__lead">
+              The engineering tracks, open-source drops, and Command Line posts that fill in the architecture
+              underneath the Day&nbsp;1 demos.
+            </p>
+          </header>
+          <ul class="day-card__bullets">
+            <li><strong>Personal agents:</strong> Microsoft Scout — Project Lobster grows up</li>
+            <li><strong>Customization:</strong> Frontier Tuning on MAI models</li>
+            <li><strong>Quality:</strong> The Agent Optimization Loop + ASSERT evals</li>
+            <li><strong>Governance:</strong> Agent Control Specification (ACS)</li>
+            <li><strong>Science:</strong> Microsoft Discovery GA + Mayo Clinic collaboration</li>
+            <li><strong>Platform:</strong> Confidential Live Migration · Copilot app deep dive</li>
+          </ul>
+          <footer class="day-card__foot">
+            <span class="day-card__count"><strong data-day-count-card="2">9</strong> announcements</span>
+            <span class="day-card__cta">Filter to Day 2 ↓</span>
+          </footer>
+        </article>
+      </div>
+    </div>
+  </section>
+  <!-- ───────────────────────── Takes (short blog posts) ─────────────────────── -->
+  <section class="section" id="takes">
+    <div class="container">
+      <div class="section__head">
+        <span class="section__eyebrow">My takes</span>
+        <h2 class="section__title">Four short posts on the announcements I can't stop thinking about</h2>
+        <p class="section__lead">
+          Opinionated reads on the Day&nbsp;1 and Day&nbsp;2 announcements that actually move the platform forward —
+          Microsoft Scout, HorizonDB, the Agent Control Specification, and the seven new MAI models.
+        </p>
+        <p class="section__byline">By <strong>Heisenberg</strong></p>
+      </div>
+
+      <div class="takes-grid takes-grid--feature">
+        <a class="take-card take-card--lg take-card--ai" href="blog/microsoft-scout.html"
+           style="background-image:linear-gradient(180deg,rgba(10,11,20,.35),rgba(10,11,20,.92)),url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7304-scaled.jpg')">
+          <div class="take-card__chips">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2 · Jun 3</span>
+            <span class="take-card__chip take-card__chip--cat">Microsoft AI</span>
+          </div>
+          <h3>Scout, and why personal agents finally feel inevitable</h3>
+          <p>The first personal agent that walks up to the enterprise front door with its keys already on the lanyard — and what that means for the post-Cortana era.</p>
+          <span class="take-card__cta">Read take →</span>
+        </a>
+
+        <a class="take-card take-card--lg take-card--data" href="blog/horizon-db.html"
+           style="background-image:linear-gradient(180deg,rgba(10,11,20,.35),rgba(10,11,20,.92)),url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5164-1024x683.jpg')">
+          <div class="take-card__chips">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1 · Jun 2</span>
+            <span class="take-card__chip take-card__chip--cat">Azure Databases</span>
+          </div>
+          <h3>HorizonDB: Postgres grew up and got an opinion about AI</h3>
+          <p>The press release said “OLTP, vector, and memory in one engine.” The actual move is to make vector a first-class index. That re-orders the database stack.</p>
+          <span class="take-card__cta">Read take →</span>
+        </a>
+      </div>
+
+      <div class="takes-grid takes-grid--2">
+        <a class="take-card take-card--ai" href="blog/agent-control-spec.html"
+           style="background-image:linear-gradient(180deg,rgba(10,11,20,.3),rgba(10,11,20,.92)),url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5127-1024x683.jpg')">
+          <div class="take-card__chips">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2 · Jun 3</span>
+            <span class="take-card__chip take-card__chip--cat">Open standard</span>
+          </div>
+          <h3>ACS is the most important Build announcement nobody noticed</h3>
+          <p>A vendor-neutral spec for runtime agent governance. The bottleneck just got a contract — if anyone else adopts it.</p>
+          <span class="take-card__cta">Read take →</span>
+        </a>
+
+        <a class="take-card take-card--ai" href="blog/mai-models.html"
+           style="background-image:linear-gradient(180deg,rgba(10,11,20,.3),rgba(10,11,20,.92)),url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7107-scaled.jpg')">
+          <div class="take-card__chips">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1 · Jun 2</span>
+            <span class="take-card__chip take-card__chip--cat">Microsoft AI</span>
+          </div>
+          <h3>Seven new MAI models, and the case for customer choice</h3>
+          <p>Read alongside Frontier Tuning and Foundry's model catalog — first-party, partner, and open all on one platform. This is what real customer choice at the model layer looks like.</p>
+          <span class="take-card__cta">Read take →</span>
+        </a>
+      </div>
+    </div>
+  </section>
   <!-- ───────────────────────── Filters + Cards ───────────────────────── -->
   <section class="section" id="announcements">
     <div class="container">
@@ -152,6 +277,12 @@
         <span class="section__eyebrow">The full list</span>
         <h2 class="section__title">All announcements — preview, then dive in</h2>
         <p class="section__lead">Click any card for the full story, why it matters, and a link to the official announcement.</p>
+      </div>
+
+      <div class="filters filters--days" role="tablist" aria-label="Filter by day">
+        <button class="filter filter--day active" data-day="all" role="tab" aria-selected="true">All days <span class="filter__count" data-day-count-for="all"></span></button>
+        <button class="filter filter--day" data-day="1" role="tab"><span class="day-dot day-dot--1"></span>Day 1 · Jun 2 <span class="filter__count" data-day-count-for="1"></span></button>
+        <button class="filter filter--day" data-day="2" role="tab"><span class="day-dot day-dot--2"></span>Day 2 · Jun 3 <span class="filter__count" data-day-count-for="2"></span></button>
       </div>
 
       <div class="filters" role="tablist" aria-label="Filter announcements">
@@ -168,7 +299,7 @@
         <svg class="search__icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        <input type="search" id="search-input" class="search__input" placeholder="Search announcements — try &quot;Copilot&quot;, &quot;quantum&quot;, &quot;Postgres&quot;…" autocomplete="off" spellcheck="false" />
+        <input type="search" id="search-input" class="search__input" placeholder="Search announcements — try &quot;Scout&quot;, &quot;ASSERT&quot;, &quot;Cobalt&quot;, &quot;Discovery&quot;…" autocomplete="off" spellcheck="false" />
         <button class="search__clear" id="search-clear" aria-label="Clear search" hidden>&times;</button>
         <kbd class="search__kbd">/</kbd>
       </div>

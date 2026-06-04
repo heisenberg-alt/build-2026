@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACS is the most important Build announcement nobody noticed — Build 2026 Takes</title>
+  <meta name="description" content="A short take on the Agent Control Specification — the portable runtime-governance spec that could be to agents what OAuth was to identity." />
+  <meta property="og:title" content="ACS is the most important Build announcement nobody noticed" />
+  <meta property="og:description" content="A short take on the Agent Control Specification — the portable runtime-governance spec that could be to agents what OAuth was to identity." />
+  <meta property="og:image" content="https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5127-1024x683.jpg" />
+  <meta property="og:type" content="article" />
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://msftstories.thesourcemediaassets.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body class="body--post post--ai">
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../index.html#top" class="nav__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <span>Build <strong>2026</strong></span>
+      </a>
+      <div class="nav__links">
+        <a href="../index.html#featured">Featured</a>
+        <a href="../index.html#days">Days</a>
+        <a href="../index.html#takes">Takes</a>
+        <a href="../index.html#announcements">Announcements</a>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener" class="nav__cta">Official Newsroom →</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post">
+    <header class="post__hero" style="background-image:url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5127-1024x683.jpg')">
+      <div class="post__hero-overlay">
+        <div class="container post__hero-inner">
+          <a class="post__back" href="../index.html#takes">← All takes</a>
+          <div class="post__meta">
+            <span class="tag tag--ai">Open standard</span>
+            <span class="tag tag--day tag--day2"><span class="day-dot day-dot--2"></span>Day 2 · Jun 3</span>
+            <span class="tag tag--take">Personal take</span>
+            <span class="post__date">Posted Jun 4, 2026 · 5 min read</span>
+          </div>
+          <h1 class="post__title">ACS is the most important Build announcement nobody noticed</h1>
+          <p class="post__deck">
+            Frontier models get the headlines. Open contracts get the install base. The Agent Control
+            Specification is the part of Build that lines up most directly with Microsoft's Responsible
+            AI Standard — and the one I think history will judge most kindly.
+          </p>
+          <p class="post__byline">
+            By <strong>Heisenberg</strong>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="post__body">
+        <p class="post__lede">
+          Tucked between Frontier Tuning and the Agent Optimization Loop on Day 2, Microsoft published
+          the <strong>Agent Control Specification (ACS)</strong> — a vendor-neutral spec for runtime
+          agent governance. For me, this is the announcement that lines up most directly with
+          Microsoft's <em>Responsible AI Standard</em>, and the one I think history will judge most
+          kindly. It's also the strongest recent signal that Microsoft sees agent trust as an
+          ecosystem problem, not a single-vendor one.
+        </p>
+
+        <h2>What Microsoft announced</h2>
+        <p>
+          ACS is a published, open specification with a reference implementation in both Foundry and
+          the Copilot app on day one. It covers the four messy middles of every agent deployment so
+          far: what the agent is allowed to do, who needs to approve sensitive actions, what data it's
+          allowed to touch, and how every step is audited.
+        </p>
+        <ul class="post__bullets">
+          <li>Declarative manifest of the agent's capabilities and tools</li>
+          <li>Per-action approval hooks: silent, prompt, or multi-party</li>
+          <li>Data-residency and PII boundaries expressed inside the contract</li>
+          <li>Runtime-agnostic audit log format — portable across vendors</li>
+          <li>Built on existing identity and policy primitives — no rip-and-replace</li>
+        </ul>
+
+        <h2>Why it lines up with Microsoft's direction</h2>
+        <p>
+          Microsoft's six Responsible AI principles — fairness, reliability and safety, privacy and
+          security, inclusiveness, transparency, and accountability — only mean something if engineers
+          have a place to express them in code. ACS is that place for agents. It takes principles that
+          have lived in policy documents and turns them into a manifest that runtimes can enforce
+          uniformly.
+        </p>
+        <p>
+          It also continues a pattern Microsoft has been quietly executing for years: open-source the
+          contract, ship the best reference, and let the ecosystem build on top. The Language Server
+          Protocol did it for editors. OpenAPI did it for APIs. MCP did it for tools. ACS is the same
+          playbook for agent governance — which is exactly the surface where a single vendor's policy
+          file would be the worst possible outcome.
+        </p>
+
+        <aside class="post__take">
+          <h3>My take</h3>
+          <p>
+            The part that made me sit up: ACS isn't trying to be Microsoft's policy layer with extra
+            YAML. It's trying to be the contract that makes governance portable across Foundry,
+            Copilot, Windows, and whatever third-party runtime you adopt next. That's a much more
+            generous posture than the market expected, and it's the right one if you actually believe
+            agents will outlive any single vendor's runtime.
+          </p>
+          <p>
+            For Microsoft, this is also a credibility play — and a welcome one. The last few years
+            have made it clear that the company wants to be the trusted home for enterprise AI, and
+            trust isn't a marketing surface, it's an engineering one. ACS is the strongest signal yet
+            that Microsoft understands the difference, and is willing to invest in the open contracts
+            that earn that trust over time.
+          </p>
+        </aside>
+
+        <p class="post__signoff">
+          — <strong>Heisenberg</strong>, 4 June 2026 · specs rarely make highlight reels, but they're often what's left standing five years later.
+        </p>
+
+        <div class="post__source">
+          <a class="btn btn--primary" href="https://commandline.microsoft.com/agent-control-specification-runtime-governance/" target="_blank" rel="noopener">
+            Read the official announcement →
+          </a>
+        </div>
+      </div>
+
+      <section class="post__more">
+        <h3 class="post__more-title">More takes</h3>
+        <div class="takes-grid takes-grid--3">
+          <a class="take-card take-card--ai" href="microsoft-scout.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2</span>
+            <h4>Scout, and why personal agents finally feel inevitable</h4>
+            <p>The first personal agent that walks up to the enterprise front door with its keys already on the lanyard.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--data" href="horizon-db.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1</span>
+            <h4>HorizonDB: Postgres grew up and got an opinion about AI</h4>
+            <p>Vector, OLTP, and agent memory in one engine — and why that re-orders the database stack.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--ai" href="mai-models.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1</span>
+            <h4>Seven new MAI models, and the case for customer choice</h4>
+            <p>First-party, partner, and open — all on one platform, all customizable with Frontier Tuning.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <div>
+          <strong>Microsoft Build 2026 — Recap</strong>
+          <p>An unofficial community recap. All product names, logos, and brands are property of Microsoft Corporation. Images © Microsoft.</p>
+        </div>
+      </div>
+      <div class="footer__links">
+        <h5>Official sources</h5>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener">Microsoft Build 2026 Newsroom</a>
+        <a href="https://commandline.microsoft.com/" target="_blank" rel="noopener">Command Line blog</a>
+        <a href="https://commandline.microsoft.com/agent-control-specification-runtime-governance/" target="_blank" rel="noopener">Source for this post →</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>Built with ♥ for developers · Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+</body>
+</html>

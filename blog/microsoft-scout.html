@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microsoft Scout, and why personal agents finally feel inevitable — Build 2026 Takes</title>
+  <meta name="description" content="A short take on Microsoft Scout — the always-on, enterprise-secure personal agent that grew out of Project Lobster and OpenClaw." />
+  <meta property="og:title" content="Microsoft Scout, and why personal agents finally feel inevitable" />
+  <meta property="og:description" content="A short take on Microsoft Scout — the always-on, enterprise-secure personal agent that grew out of Project Lobster and OpenClaw." />
+  <meta property="og:image" content="https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7304-scaled.jpg" />
+  <meta property="og:type" content="article" />
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://msftstories.thesourcemediaassets.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body class="body--post post--ai">
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../index.html#top" class="nav__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <span>Build <strong>2026</strong></span>
+      </a>
+      <div class="nav__links">
+        <a href="../index.html#featured">Featured</a>
+        <a href="../index.html#days">Days</a>
+        <a href="../index.html#takes">Takes</a>
+        <a href="../index.html#announcements">Announcements</a>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener" class="nav__cta">Official Newsroom →</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post">
+    <header class="post__hero" style="background-image:url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A7304-scaled.jpg')">
+      <div class="post__hero-overlay">
+        <div class="container post__hero-inner">
+          <a class="post__back" href="../index.html#takes">← All takes</a>
+          <div class="post__meta">
+            <span class="tag tag--ai">Microsoft AI</span>
+            <span class="tag tag--day tag--day2"><span class="day-dot day-dot--2"></span>Day 2 · Jun 3</span>
+            <span class="tag tag--take">Personal take</span>
+            <span class="post__date">Posted Jun 4, 2026 · 4 min read</span>
+          </div>
+          <h1 class="post__title">Scout, and why personal agents finally feel inevitable</h1>
+          <p class="post__deck">
+            I've been waiting a long time to see a personal agent shipped with enterprise trust built in from
+            the first commit. Scout is that product, and the substrate underneath it is what made me
+            sit up.
+          </p>
+          <p class="post__byline">
+            By <strong>Heisenberg</strong>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="post__body">
+        <p class="post__lede">
+          On Day 2 of Build, Omar Shahine and Jakob Werner walked through how an internal Microsoft
+          experiment called <em>Project Lobster</em> became a product: <strong>Microsoft Scout</strong>, an
+          always-on personal agent built on top of OpenClaw with enterprise-grade security from day one.
+          For me, this is the Day 2 announcement that matters most — because it's where Microsoft's
+          mission to <em>empower every person and every organization on the planet to achieve more</em>
+          finally meets the agent era on terms that end users, IT, and regulators can all live with.
+        </p>
+
+        <h2>What Microsoft announced</h2>
+        <p>
+          Scout is a persistent personal agent that travels with you across apps and devices. Unlike a chat
+          window you open and close, it captures context continuously, remembers what matters to you, and
+          is allowed to act on your behalf within explicit policy. The substrate underneath it reflects
+          years of investment in Responsible AI and trustworthy computing — and that's the part I think
+          deserves the spotlight.
+        </p>
+        <ul class="post__bullets">
+          <li>Continuous, low-friction context capture across the workday</li>
+          <li>Capability-scoped tool execution via the OpenClaw runtime</li>
+          <li>Per-user memory with org-controlled retention, consent, and audit</li>
+          <li>Identity, policy, and approvals expressed through the Agent Control Specification</li>
+          <li>Designed against Microsoft's Responsible AI Standard from the first commit</li>
+        </ul>
+
+        <h2>Why it lines up with Microsoft's direction</h2>
+        <p>
+          If you've followed Satya's framing over the last few years, two phrases come up over and over:
+          <em>empowerment at scale</em> and <em>trust by design</em>. Scout is the first product I've seen
+          that takes both seriously at the same time. It's a personal agent — not a team agent, not a
+          tenant agent — meaning it's accountable to the individual using it. And it's an enterprise
+          product, meaning everything that individual does inside it is governable, auditable, and
+          revocable by the organization that pays for the device.
+        </p>
+        <p>
+          That's a hard split to land. Microsoft's advantage here is that it's already had to land it
+          once before, with Windows and Microsoft 365: individual productivity inside organizational
+          guardrails. Scout extends that pattern into the agent era rather than asking customers to
+          invent it again from scratch.
+        </p>
+
+        <aside class="post__take">
+          <h3>My take</h3>
+          <p>
+            I've watched a decade of "personal AI assistant" attempts hit the same wall: the assistant is
+            a consumer experience trying to sneak into the enterprise through the back door. Scout flips
+            that order — it's built enterprise-first, with the consumer-grade experience layered on top.
+            Honestly, that's the order only a company with Microsoft's footprint in identity, endpoint,
+            and policy can credibly pull off, and it's the right one.
+          </p>
+          <p>
+            The bigger reason I'm optimistic about Scout is that it doesn't ship alone. OpenClaw, ACS,
+            Foundry, and the Copilot app all show up in the same story. None of them does the job by
+            itself — but together they form the first end-to-end platform where a personal agent can be
+            genuinely powerful <em>and</em> well-behaved at the same time. That's the version of "AI for
+            everyone" I actually want to see arrive.
+          </p>
+        </aside>
+
+        <p class="post__signoff">
+          — <strong>Heisenberg</strong>, 4 June 2026 · still mentally unpacking everything from Day 2.
+        </p>
+
+        <div class="post__source">
+          <a class="btn btn--primary" href="https://commandline.microsoft.com/project-lobster-openclaw-personal-ai-assistant-enterprise-secure/" target="_blank" rel="noopener">
+            Read the official announcement →
+          </a>
+        </div>
+      </div>
+
+      <section class="post__more">
+        <h3 class="post__more-title">More takes</h3>
+        <div class="takes-grid takes-grid--3">
+          <a class="take-card take-card--data" href="horizon-db.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1</span>
+            <h4>HorizonDB: Postgres grew up and got an opinion about AI</h4>
+            <p>Vector, OLTP, and agent memory in one engine — and why that re-orders the database stack.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--ai" href="agent-control-spec.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2</span>
+            <h4>ACS is the most important Build announcement nobody noticed</h4>
+            <p>A vendor-neutral standard for runtime agent governance. The bottleneck just got a contract.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--ai" href="mai-models.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1</span>
+            <h4>Seven new MAI models, and the case for customer choice</h4>
+            <p>First-party, partner, and open — all on one platform, all customizable with Frontier Tuning.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <div>
+          <strong>Microsoft Build 2026 — Recap</strong>
+          <p>An unofficial community recap. All product names, logos, and brands are property of Microsoft Corporation. Images © Microsoft.</p>
+        </div>
+      </div>
+      <div class="footer__links">
+        <h5>Official sources</h5>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener">Microsoft Build 2026 Newsroom</a>
+        <a href="https://commandline.microsoft.com/" target="_blank" rel="noopener">Command Line blog</a>
+        <a href="https://commandline.microsoft.com/project-lobster-openclaw-personal-ai-assistant-enterprise-secure/" target="_blank" rel="noopener">Source for this post →</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>Built with ♥ for developers · Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+</body>
+</html>

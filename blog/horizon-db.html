@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HorizonDB: Postgres grew up and got an opinion about AI — Build 2026 Takes</title>
+  <meta name="description" content="A short take on Azure HorizonDB — why fusing OLTP, vector search, and agent memory into one Postgres-compatible engine is a bigger deal than the press release made it sound." />
+  <meta property="og:title" content="HorizonDB: Postgres grew up and got an opinion about AI" />
+  <meta property="og:description" content="A short take on Azure HorizonDB — why fusing OLTP, vector search, and agent memory into one Postgres-compatible engine is a bigger deal than the press release made it sound." />
+  <meta property="og:image" content="https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5164-1024x683.jpg" />
+  <meta property="og:type" content="article" />
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://msftstories.thesourcemediaassets.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body class="body--post post--data">
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../index.html#top" class="nav__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <span>Build <strong>2026</strong></span>
+      </a>
+      <div class="nav__links">
+        <a href="../index.html#featured">Featured</a>
+        <a href="../index.html#days">Days</a>
+        <a href="../index.html#takes">Takes</a>
+        <a href="../index.html#announcements">Announcements</a>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener" class="nav__cta">Official Newsroom →</a>
+      </div>
+    </div>
+  </nav>
+
+  <article class="post">
+    <header class="post__hero" style="background-image:url('https://msftstories.thesourcemediaassets.com/sites/753/2026/06/8C7A5164-1024x683.jpg')">
+      <div class="post__hero-overlay">
+        <div class="container post__hero-inner">
+          <a class="post__back" href="../index.html#takes">← All takes</a>
+          <div class="post__meta">
+            <span class="tag tag--data">Azure Databases</span>
+            <span class="tag tag--day tag--day1"><span class="day-dot day-dot--1"></span>Day 1 · Jun 2</span>
+            <span class="tag tag--take">Personal take</span>
+            <span class="post__date">Posted Jun 4, 2026 · 4 min read</span>
+          </div>
+          <h1 class="post__title">HorizonDB: Postgres grew up and got an opinion about AI</h1>
+          <p class="post__deck">
+            One database, one query language, one consistency model — with vector and agent memory
+            treated as first-class citizens. For me, this is Day 1's quietest big idea, and the one
+            most aligned with how Microsoft thinks about developers in 2026: meet them where they
+            already are.
+          </p>
+          <p class="post__byline">
+            By <strong>Heisenberg</strong>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="post__body">
+        <p class="post__lede">
+          <strong>Azure HorizonDB</strong> is Microsoft's reimagined Postgres-compatible engine for the
+          AI era. It fuses transactional workloads, vector search, and agent memory into a single store
+          with one query language and one consistency model. For me, this is the Day 1 announcement
+          that quietly says the most about how Microsoft thinks about developers in 2026: meet them
+          where they already are, and make the new things — vector, memory, agents — first-class
+          citizens of the tools they already love.
+        </p>
+
+        <h2>What Microsoft announced</h2>
+        <p>
+          HorizonDB ships as a fully managed Azure service, wire-compatible with Postgres — the
+          language and ecosystem more developers reach for first than any other open database.
+          Crucially, vector search and agent memory are first-class citizens of the storage engine,
+          not extensions bolted onto a heap table later.
+        </p>
+        <ul class="post__bullets">
+          <li>OLTP + vector + agent memory in one Postgres-compatible engine</li>
+          <li>Vector treated as a primary index, not a side-table afterthought</li>
+          <li>Built-in primitives for episodic, semantic, and procedural agent memory</li>
+          <li>Familiar Postgres drivers, SQL surface, and tooling — no new mental model to learn</li>
+          <li>Managed reliability, security, and operational primitives the Azure way</li>
+        </ul>
+
+        <h2>Why it lines up with Microsoft's direction</h2>
+        <p>
+          Microsoft has spent the last decade telling developers, “use what you love — we'll make it
+          work great on Azure.” That's the line behind the investments in Linux, Java, Python,
+          VS Code, GitHub, and managed Postgres itself. HorizonDB is the most assertive version of
+          that promise I've seen so far: the Postgres community gets a clear, first-party path into
+          agentic workloads without having to swap engines or learn a new query language.
+        </p>
+        <p>
+          Ship a managed open-compatible database, give it a first-class AI surface, keep it inside
+          the Azure trust boundary, and let developers carry their existing skills forward. That's a
+          textbook Microsoft developer-empowerment move, and it's the right one.
+        </p>
+
+        <aside class="post__take">
+          <h3>My take</h3>
+          <p>
+            The honest reason I'm excited: I've been paying the “AI app database tax” for two years.
+            One database for facts, another for embeddings, a cache for sessions, a queue for events,
+            and a hand-rolled memory service trying to keep them all in agreement. HorizonDB is the
+            first design I've seen that makes that operational complexity optional rather than
+            mandatory.
+          </p>
+          <p>
+            What I appreciate even more is how it complements the rest of the Azure data portfolio.
+            Cosmos DB got its own Day 1 agent toolkit, Fabric got GPU data warehousing, and HorizonDB
+            gives Postgres shops their on-ramp. The framing isn't “one database to rule them all” —
+            it's “the right primitive for the workload, all under the same governance and security
+            model.” That's the Microsoft pattern, and it's a healthy one for developers.
+          </p>
+        </aside>
+
+        <p class="post__signoff">
+          — <strong>Heisenberg</strong>, 4 June 2026 · written by someone who has built and re-built one too many vector glue layers.
+        </p>
+
+        <div class="post__source">
+          <a class="btn btn--primary" href="https://azure.microsoft.com/en-us/blog/azure-horizondb/" target="_blank" rel="noopener">
+            Read the official announcement →
+          </a>
+        </div>
+      </div>
+
+      <section class="post__more">
+        <h3 class="post__more-title">More takes</h3>
+        <div class="takes-grid takes-grid--3">
+          <a class="take-card take-card--ai" href="microsoft-scout.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2</span>
+            <h4>Scout, and why personal agents finally feel inevitable</h4>
+            <p>The first personal agent that walks up to the enterprise front door with its keys already on the lanyard.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--ai" href="agent-control-spec.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--2"></span>Day 2</span>
+            <h4>ACS is the most important Build announcement nobody noticed</h4>
+            <p>A vendor-neutral standard for runtime agent governance. The bottleneck just got a contract.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+          <a class="take-card take-card--ai" href="mai-models.html">
+            <span class="take-card__chip"><span class="day-dot day-dot--1"></span>Day 1</span>
+            <h4>Seven new MAI models, and the case for customer choice</h4>
+            <p>First-party, partner, and open — all on one platform, all customizable with Frontier Tuning.</p>
+            <span class="take-card__cta">Read take →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <svg class="nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <div>
+          <strong>Microsoft Build 2026 — Recap</strong>
+          <p>An unofficial community recap. All product names, logos, and brands are property of Microsoft Corporation. Images © Microsoft.</p>
+        </div>
+      </div>
+      <div class="footer__links">
+        <h5>Official sources</h5>
+        <a href="https://news.microsoft.com/build-2026/" target="_blank" rel="noopener">Microsoft Build 2026 Newsroom</a>
+        <a href="https://azure.microsoft.com/blog/" target="_blank" rel="noopener">Azure blog</a>
+        <a href="https://azure.microsoft.com/en-us/blog/azure-horizondb/" target="_blank" rel="noopener">Source for this post →</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>Built with ♥ for developers · Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+</body>
+</html>

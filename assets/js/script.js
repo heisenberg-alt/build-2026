@@ -15,7 +15,12 @@
     { tag: 'GitHub Copilot App', text: 'From workspace to pull request — native on Windows' },
     { tag: 'Autopilots', text: 'Long-running, goal-driven agents arrive across Microsoft 365' },
     { tag: 'OpenClaw', text: 'A new open standard for safe local agent execution' },
-    { tag: 'Surface RTX Spark', text: 'A developer-first AI workstation from Microsoft + NVIDIA' }
+    { tag: 'Surface RTX Spark', text: 'A developer-first AI workstation from Microsoft + NVIDIA' },
+    { tag: 'Day 2 · Microsoft Scout', text: 'Project Lobster grows up — an enterprise-secure personal agent' },
+    { tag: 'Day 2 · Frontier Tuning', text: 'Customize MAI frontier models with your own data and graders' },
+    { tag: 'Day 2 · ASSERT', text: 'Open-source — turn written specs into executable evals for any agent' },
+    { tag: 'Day 2 · Agent Control Spec', text: 'Portable runtime governance for AI agents across any platform' },
+    { tag: 'Day 2 · Microsoft Discovery', text: 'Agentic platform for scientific R&D reaches GA — Mayo Clinic on board' }
   ];
 
   const renderTicker = () => {
@@ -61,12 +66,15 @@
     cardsEl.innerHTML = data
       .map(
         (item, i) => `
-        <article class="card card--${item.cat}" data-cat="${item.cat}" data-id="${item.id}"
+        <article class="card card--${item.cat}" data-cat="${item.cat}" data-day="${item.day}" data-id="${item.id}"
                  data-search="${escapeHtml((item.title + ' ' + item.subtitle + ' ' + item.preview + ' ' + item.tagLabel).toLowerCase())}"
                  tabindex="0" role="button" aria-label="Open details for ${escapeHtml(item.title)}"
                  style="animation-delay:${Math.min(i, 12) * 40}ms">
           <div class="card__img" style="background-image:url('${item.img}')">
-            <span class="card__category"><span class="${tagClassFor(item.cat)}">${escapeHtml(item.tagLabel)}</span></span>
+            <span class="card__category">
+              <span class="${tagClassFor(item.cat)}">${escapeHtml(item.tagLabel)}</span>
+              <span class="tag tag--day tag--day${item.day}"><span class="day-dot day-dot--${item.day}"></span>Day ${item.day}</span>
+            </span>
           </div>
           <div class="card__body">
             <h3 class="card__title">${highlight(item.title, query)}</h3>
@@ -82,34 +90,52 @@
   };
 
   // ───────────────── State ─────────────────
-  const state = { cat: 'all', query: '' };
+  const state = { day: 'all', cat: 'all', query: '' };
+
+  const dayLabel = (d) => (d === '1' || d === 1 ? 'Day 1' : d === '2' || d === 2 ? 'Day 2' : '');
 
   const applyFilters = () => {
     const q = state.query.trim().toLowerCase();
     let visible = 0;
     document.querySelectorAll('.card').forEach((card) => {
+      const dayOk = state.day === 'all' || card.dataset.day === String(state.day);
       const catOk = state.cat === 'all' || card.dataset.cat === state.cat;
       const qOk = !q || card.dataset.search.includes(q);
-      const show = catOk && qOk;
+      const show = dayOk && catOk && qOk;
       card.classList.toggle('hidden', !show);
       if (show) visible++;
     });
     emptyEl.hidden = visible !== 0;
     cardsEl.style.display = visible === 0 ? 'none' : '';
-    if (q || state.cat !== 'all') {
-      statusEl.innerHTML = `Showing <strong>${visible}</strong> of <strong>${data.length}</strong> announcements${
-        q ? ` matching “<strong>${escapeHtml(state.query)}</strong>”` : ''
-      }${state.cat !== 'all' ? ` in <strong>${state.cat}</strong>` : ''}.`;
+    const totalForContext =
+      state.day === 'all'
+        ? data.length
+        : data.filter((d) => String(d.day) === String(state.day)).length;
+    if (q || state.cat !== 'all' || state.day !== 'all') {
+      const parts = [];
+      if (state.day !== 'all') parts.push(`on <strong>${dayLabel(state.day)}</strong>`);
+      if (state.cat !== 'all') parts.push(`in <strong>${state.cat}</strong>`);
+      if (q) parts.push(`matching “<strong>${escapeHtml(state.query)}</strong>”`);
+      statusEl.innerHTML = `Showing <strong>${visible}</strong> of <strong>${totalForContext}</strong> announcements ${parts.join(' ')}.`;
     } else {
       statusEl.innerHTML = '';
     }
+    updateCategoryCounts();
   };
 
   const updateCategoryCounts = () => {
-    const counts = data.reduce((acc, d) => ((acc[d.cat] = (acc[d.cat] || 0) + 1), acc), {});
+    const pool =
+      state.day === 'all' ? data : data.filter((d) => String(d.day) === String(state.day));
+    const counts = pool.reduce((acc, d) => ((acc[d.cat] = (acc[d.cat] || 0) + 1), acc), {});
     document.querySelectorAll('[data-count-for]').forEach((el) => {
       const cat = el.dataset.countFor;
-      el.textContent = cat === 'all' ? data.length : counts[cat] || 0;
+      el.textContent = cat === 'all' ? pool.length : counts[cat] || 0;
+    });
+    // Day-filter chip counts always show the full per-day totals
+    document.querySelectorAll('[data-day-count-for]').forEach((el) => {
+      const d = el.dataset.dayCountFor;
+      el.textContent =
+        d === 'all' ? data.length : data.filter((x) => String(x.day) === String(d)).length;
     });
   };
 
@@ -146,7 +172,7 @@
   });
 
   // ───────────────── Category filters ─────────────────
-  const filters = document.querySelectorAll('.filter');
+  const filters = document.querySelectorAll('.filter[data-filter]');
   filters.forEach((btn) => {
     btn.addEventListener('click', () => {
       filters.forEach((b) => {
@@ -160,14 +186,50 @@
     });
   });
 
+  // ───────────────── Day filters ─────────────────
+  const dayFilters = document.querySelectorAll('.filter[data-day]');
+  const setActiveDay = (d) => {
+    state.day = d;
+    dayFilters.forEach((b) => {
+      const isActive = b.dataset.day === String(d);
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    applyFilters();
+  };
+  dayFilters.forEach((btn) => {
+    btn.addEventListener('click', () => setActiveDay(btn.dataset.day));
+  });
+
+  // Day-overview cards jump-and-filter
+  document.querySelectorAll('[data-jump-day]').forEach((el) => {
+    const jump = () => {
+      setActiveDay(el.dataset.jumpDay);
+      const target = document.getElementById('announcements');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    el.addEventListener('click', jump);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        jump();
+      }
+    });
+  });
+
   document.getElementById('empty-reset').addEventListener('click', () => {
     searchInput.value = '';
     state.query = '';
     state.cat = 'all';
+    state.day = 'all';
     searchClear.hidden = true;
     filters.forEach((b) => {
       b.classList.toggle('active', b.dataset.filter === 'all');
       b.setAttribute('aria-selected', b.dataset.filter === 'all' ? 'true' : 'false');
+    });
+    dayFilters.forEach((b) => {
+      b.classList.toggle('active', b.dataset.day === 'all');
+      b.setAttribute('aria-selected', b.dataset.day === 'all' ? 'true' : 'false');
     });
     renderCards('');
     applyFilters();
