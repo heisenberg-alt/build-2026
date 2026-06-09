@@ -29,7 +29,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Install Marp CLI
+        run: npm install --global @marp-team/marp-cli@4.2.3
 
       - name: Resolve files to build
         id: files
@@ -51,14 +59,10 @@ jobs:
           echo "Building: $files"
 
       - name: Build PPTX (rasterized, matches the live HTML)
-        uses: docker://marpteam/marp-cli:v4.2.3
-        with:
-          args: --pptx --allow-local-files ${{ steps.files.outputs.files }}
+        run: marp --pptx --allow-local-files ${{ steps.files.outputs.files }}
 
       - name: Build PDF
-        uses: docker://marpteam/marp-cli:v4.2.3
-        with:
-          args: --pdf --allow-local-files ${{ steps.files.outputs.files }}
+        run: marp --pdf --allow-local-files ${{ steps.files.outputs.files }}
 
       - name: List build outputs
         run: ls -lh build-2026-*.pptx build-2026-*.pdf 2>/dev/null || true
