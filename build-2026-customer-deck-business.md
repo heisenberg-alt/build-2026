@@ -365,7 +365,7 @@ style: |
 
 # Microsoft Build 2026
 ## A new system for software
-### What it means for <strong>{{CUSTOMER_NAME}}</strong>
+### What it means for <strong>Contoso Ltd</strong>
 
 San Francisco · June 2–3, 2026 · curated for the conversation you actually want to have
 
@@ -399,7 +399,7 @@ The whole keynote was a system-design argument. The model isn't the product anym
 
 ---
 
-# What {{CUSTOMER_NAME}} cares about → where Build 2026 lands
+# What Contoso Ltd cares about → where Build 2026 lands
 
 | Your priority | Where Build 2026 shows up | Tile to look at first |
 |---|---|---|
