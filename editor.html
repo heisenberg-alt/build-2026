@@ -339,6 +339,32 @@
     .ed-adv__toolbar .spacer { flex: 1; }
     .ed-adv__toolbar a { color: var(--text-dim); font-size: 12px; padding: 4px 8px; border-radius: 6px; }
     .ed-adv__toolbar a:hover { background: var(--surface); color: #fff; }
+
+    /* ────────── In-page commit (token + progress) ────────── */
+    .ed-token {
+      margin: 18px auto 0; max-width: 600px; text-align: left;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px; font-size: 13.5px;
+    }
+    .ed-token b { display: block; margin-bottom: 6px; }
+    .ed-token p { color: var(--text-dim); margin: 0 0 10px; line-height: 1.55; }
+    .ed-token__row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ed-token__row input {
+      flex: 1; min-width: 220px; padding: 8px 12px; border-radius: 8px;
+      border: 1px solid var(--border); background: rgba(0,0,0,.3); color: #fff;
+      font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12.5px;
+    }
+    .ed-progress { margin: 14px auto 0; max-width: 600px; font-size: 13.5px; color: var(--text-dim); }
+    .ed-progress.is-error { color: #ff8080; }
+    .ed-pptx-link {
+      display: inline-block; margin: 12px auto 0; padding: 10px 22px;
+      border-radius: 10px; font-weight: 700; font-size: 14px; color: #fff;
+      background: linear-gradient(135deg, #1fc8a9, #00a4ef); text-decoration: none;
+    }
+    .ed-pptx-link:hover { filter: brightness(1.1); }
+    .ed-finish__fallback { margin-top: 14px; font-size: 12.5px; }
+    .ed-finish__fallback a { color: var(--text-dim); text-decoration: underline; }
+    .ed-finish__fallback a:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -435,19 +461,41 @@
           Pick how you want the PowerPoint file delivered.
         </p>
         <div class="ed-finish__actions">
-          <a class="ed-finish__action ed-finish__action--primary" id="fin-commit" href="#" target="_blank" rel="noopener">
-            <b>📤 Commit on GitHub → get PPTX</b>
-            <span>One click commits your edits. A build runs (~1 min) and the new PPTX shows up on the Releases page.</span>
-          </a>
+          <button class="ed-finish__action ed-finish__action--primary" id="fin-commit-direct">
+            <b>📤 Commit &amp; build PPTX</b>
+            <span>Commits your edits to <b>main</b> right from this page, waits for the build (~1–2 min), then gives you a download link for the new PPTX.</span>
+          </button>
           <button class="ed-finish__action" id="fin-download">
             <b>⬇ Download markdown only</b>
             <span>Save the edited .md file locally. Hand it to a teammate to build the PPTX.</span>
           </button>
           <a class="ed-finish__action" id="fin-release" href="#" target="_blank" rel="noopener">
-            <b>📦 Get the current PPTX</b>
-            <span>Grab the most recently built PPTX from Releases (won't include your edits until you commit).</span>
+            <b>📦 Download current PPTX</b>
+            <span>Grab the most recently built PPTX (won't include your edits until you commit).</span>
           </a>
         </div>
+
+        <div class="ed-token" id="fin-token-panel" hidden>
+          <b>One-time setup: GitHub token</b>
+          <p>
+            Committing from this page needs a GitHub personal access token with
+            <b>Contents: Read &amp; write</b> permission on this repository.
+            <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create one here</a>.
+            It is stored only in this browser (localStorage) and sent only to api.github.com.
+          </p>
+          <div class="ed-token__row">
+            <input type="password" id="fin-token-input" placeholder="github_pat_… or ghp_…" autocomplete="off" />
+            <button class="ed-btn ed-btn--primary" id="fin-token-save">Save &amp; commit</button>
+            <button class="ed-btn ed-btn--ghost" id="fin-token-cancel">Cancel</button>
+          </div>
+        </div>
+
+        <div class="ed-progress" id="fin-progress" hidden></div>
+        <a class="ed-pptx-link" id="fin-pptx-link" hidden>⬇ Download your new PPTX</a>
+        <p class="ed-finish__fallback">
+          <a id="fin-commit-fallback" href="#" target="_blank" rel="noopener">…or commit manually on GitHub →</a>
+          · <a href="#" id="fin-token-forget">forget saved token</a>
+        </p>
         <div>
           <button class="ed-btn ed-btn--ghost" id="fin-back" style="margin-right:8px">← Back to editing</button>
           <button class="ed-btn ed-btn--ghost" id="fin-start-over">Start over with a different deck</button>
@@ -461,6 +509,7 @@
         <div class="ed-pane__head"><span>Markdown source</span><span class="ed-pane__hint" id="adv-editor-hint">Auto-saves locally</span></div>
         <textarea class="ed-editor" id="adv-editor" spellcheck="false" placeholder="Pick a deck from Guided mode first, or paste your own Marp markdown here."></textarea>
         <div class="ed-adv__toolbar">
+          <button class="ed-btn ed-btn--primary" id="adv-commit">📤 Commit &amp; build</button>
           <button class="ed-btn" id="adv-copy">Copy</button>
           <button class="ed-btn" id="adv-download">Download .md</button>
           <button class="ed-btn ed-btn--ghost" id="adv-reset">Reset to repo</button>
@@ -544,7 +593,15 @@
       finish: $('finish'),
       finDeckName: $('fin-deck-name'),
       finEditsCount: $('fin-edits-count'),
-      finCommit: $('fin-commit'),
+      finCommitDirect: $('fin-commit-direct'),
+      finCommitFallback: $('fin-commit-fallback'),
+      finTokenPanel: $('fin-token-panel'),
+      finTokenInput: $('fin-token-input'),
+      finTokenSave: $('fin-token-save'),
+      finTokenCancel: $('fin-token-cancel'),
+      finTokenForget: $('fin-token-forget'),
+      finProgress: $('fin-progress'),
+      finPptxLink: $('fin-pptx-link'),
       finDownload: $('fin-download'),
       finRelease: $('fin-release'),
       finBack: $('fin-back'),
@@ -555,6 +612,7 @@
       advPreview: $('adv-preview'),
       advPreviewHint: $('adv-preview-hint'),
       advEditorHint: $('adv-editor-hint'),
+      advCommit: $('adv-commit'),
       advCopy: $('adv-copy'),
       advDownload: $('adv-download'),
       advReset: $('adv-reset'),
@@ -1069,9 +1127,16 @@
       els.finDeckName.textContent = state.deck ? state.deck.label : '';
       els.finEditsCount.textContent = editCount === 0 ? 'no' : String(editCount);
       // Wire up the actions
-      els.finCommit.href = state.deck
+      els.finCommitFallback.href = state.deck
         ? `https://github.com/${REPO.owner}/${REPO.repo}/edit/${REPO.branch}/${state.deck.file}` : '#';
-      els.finRelease.href = `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+      els.finRelease.href = state.deck ? pptxAssetUrl(state.deck)
+        : `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+      // Reset the in-page commit UI
+      els.finTokenPanel.hidden = true;
+      els.finProgress.hidden = true;
+      els.finProgress.classList.remove('is-error');
+      els.finPptxLink.hidden = true;
+      els.finCommitDirect.disabled = false;
     }
 
     /* ─────────── ADVANCED MODE ─────────── */
@@ -1173,13 +1238,137 @@
       renderWizardSlide();
     });
 
+    /* ─────────── In-page GitHub commit & PPTX build ─────────── */
+    const TOKEN_KEY = 'b26-gh-token';
+    function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } }
+    function setToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} }
+
+    function b64EncodeUtf8(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      const CHUNK = 0x8000;
+      for (let i = 0; i < bytes.length; i += CHUNK) bin += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+      return btoa(bin);
+    }
+
+    async function gh(path, opts = {}) {
+      const res = await fetch(`https://api.github.com${path}`, {
+        ...opts,
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `Bearer ${getToken()}`,
+          'X-GitHub-Api-Version': '2022-11-28',
+          ...(opts.headers || {}),
+        },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        const err = new Error(body.message || res.statusText);
+        err.status = res.status;
+        throw err;
+      }
+      return res.json();
+    }
+
+    function pptxName(deck) { return deck.file.replace(/\.md$/, '.pptx'); }
+    function pptxAssetUrl(deck) {
+      return `https://github.com/${REPO.owner}/${REPO.repo}/releases/download/latest-decks/${pptxName(deck)}`;
+    }
+
+    async function commitDeck() {
+      const path = state.deck.file;
+      let sha;
+      try {
+        const cur = await gh(`/repos/${REPO.owner}/${REPO.repo}/contents/${path}?ref=${REPO.branch}`);
+        sha = cur.sha;
+      } catch (e) { if (e.status !== 404) throw e; }
+      const out = await gh(`/repos/${REPO.owner}/${REPO.repo}/contents/${path}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          message: `Edit ${path} via deck editor`,
+          content: b64EncodeUtf8(state.source),
+          branch: REPO.branch,
+          ...(sha ? { sha } : {}),
+        }),
+      });
+      return out.commit.sha;
+    }
+
+    async function waitForBuild(commitSha, onTick) {
+      const deadline = Date.now() + 8 * 60 * 1000;
+      while (Date.now() < deadline) {
+        await new Promise(r => setTimeout(r, 8000));
+        let runs;
+        try { runs = await gh(`/repos/${REPO.owner}/${REPO.repo}/actions/runs?head_sha=${commitSha}&per_page=5`); }
+        catch { continue; }
+        const run = (runs.workflow_runs || [])[0];
+        if (!run) { onTick('⏳ Waiting for the build to start…'); continue; }
+        if (run.status !== 'completed') { onTick(`🔨 Build ${run.status.replace('_', ' ')}… (~1–2 min)`); continue; }
+        if (run.conclusion === 'success') return run;
+        throw new Error(`build finished with "${run.conclusion}" — check the Actions tab`);
+      }
+      throw new Error('timed out waiting for the build — check the Actions tab');
+    }
+
+    async function runCommitFlow() {
+      const tick = (m) => { els.finProgress.hidden = false; els.finProgress.textContent = m; };
+      els.finProgress.classList.remove('is-error');
+      els.finPptxLink.hidden = true;
+      els.finCommitDirect.disabled = true;
+      try {
+        tick('📤 Committing your edits…');
+        const sha = await commitDeck();
+        setStatus('Committed', 'saved');
+        clearStorage(state.deck);
+        state.original = state.source;
+        tick(`✅ Committed ${sha.slice(0, 7)} — waiting for the PPTX build…`);
+        await waitForBuild(sha, tick);
+        tick('🎉 Build complete — your PPTX is ready:');
+        els.finPptxLink.href = pptxAssetUrl(state.deck);
+        els.finPptxLink.download = pptxName(state.deck);
+        els.finPptxLink.hidden = false;
+      } catch (err) {
+        if (err.status === 401 || err.status === 403) {
+          setToken('');
+          els.finTokenPanel.hidden = false;
+          tick(`❌ Token rejected (${err.message}). Paste a valid token and try again.`);
+        } else {
+          tick(`❌ Failed: ${err.message}`);
+        }
+        els.finProgress.classList.add('is-error');
+        setStatus('Commit failed', 'error');
+      } finally {
+        els.finCommitDirect.disabled = false;
+      }
+    }
+
+    function startCommitFlow() {
+      if (!state.deck) { setStatus('No deck loaded', 'error'); return; }
+      if (!getToken()) {
+        els.finTokenPanel.hidden = false;
+        els.finTokenInput.focus();
+        return;
+      }
+      runCommitFlow();
+    }
+
     // Finish actions
     els.finDownload.addEventListener('click', downloadCurrent);
-    els.finCommit.addEventListener('click', async (e) => {
-      // Copy markdown to clipboard first, then let the link open in a new tab
-      try { await navigator.clipboard.writeText(state.source); }
-      catch { /* clipboard blocked — link still opens */ }
-      setStatus('Markdown copied → paste on GitHub', 'saved');
+    els.finCommitDirect.addEventListener('click', startCommitFlow);
+    els.finTokenSave.addEventListener('click', () => {
+      const t = els.finTokenInput.value.trim();
+      if (!t) { els.finTokenInput.focus(); return; }
+      setToken(t);
+      els.finTokenInput.value = '';
+      els.finTokenPanel.hidden = true;
+      runCommitFlow();
+    });
+    els.finTokenInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.finTokenSave.click(); });
+    els.finTokenCancel.addEventListener('click', () => { els.finTokenPanel.hidden = true; });
+    els.finTokenForget.addEventListener('click', (e) => {
+      e.preventDefault();
+      setToken('');
+      setStatus('Token forgotten', 'saved');
     });
     els.finBack.addEventListener('click', () => { showWizardView(); renderWizardList(); renderWizardSlide(); });
     els.finStartOver.addEventListener('click', () => {
@@ -1189,6 +1378,13 @@
     });
 
     // Advanced editor
+    els.advCommit.addEventListener('click', () => {
+      if (!state.deck) { setStatus('No deck loaded', 'error'); return; }
+      state.source = els.advEditor.value;
+      saveToStorage(state.deck, state.source);
+      showFinishView();           // reuse the finish view for token prompt + progress + download link
+      startCommitFlow();
+    });
     els.advEditor.addEventListener('input', () => {
       clearTimeout(state.advRenderTimer);
       state.advRenderTimer = setTimeout(renderAdvPreview, 200);
