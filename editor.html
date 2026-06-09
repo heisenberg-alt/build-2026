@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Editor — Microsoft Build 2026</title>
+  <meta name="description" content="Edit the Microsoft Build 2026 customer deck markdown sources with a live Marp preview." />
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://esm.sh" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Page-specific layout — leans on the existing dark palette in style.css */
+    html, body { height: 100%; overflow: hidden; }
+    body { display: flex; flex-direction: column; }
+
+    .ed-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10,11,20,.85);
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      border-bottom: 1px solid var(--border);
+      flex: 0 0 auto;
+    }
+    .ed-nav__inner {
+      max-width: 100%; padding: 12px 20px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .ed-nav__brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 16px;
+      text-decoration: none; color: inherit;
+    }
+    .ed-nav__brand strong {
+      background: var(--grad-text);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      font-weight: 800;
+    }
+    .ed-nav__logo { width: 20px; height: 20px; display: block; }
+    .ed-nav__back {
+      color: var(--text-dim); font-size: 13px; font-weight: 500;
+      padding: 6px 12px; border-radius: 8px;
+      transition: background .2s, color .2s;
+    }
+    .ed-nav__back:hover { background: var(--surface); color: #fff; }
+    .ed-nav__spacer { flex: 1; }
+
+    .ed-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .ed-toolbar--secondary {
+      width: 100%; padding: 6px 0 0;
+      border-top: 1px dashed var(--border);
+      margin-top: 8px;
+      font-size: 12px;
+    }
+    .ed-toolbar--secondary .ed-btn { font-size: 12px; padding: 6px 12px; }
+    .ed-select, .ed-btn {
+      font: inherit; font-size: 13px; font-weight: 500;
+      padding: 8px 14px; border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface); color: var(--text);
+      transition: background .15s, border-color .15s, transform .1s;
+    }
+    .ed-select:hover, .ed-btn:hover { border-color: rgba(255,255,255,.32); background: var(--surface-2); }
+    .ed-btn:active { transform: translateY(1px); }
+    .ed-btn--primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 6px 18px -8px rgba(126,63,242,.6);
+    }
+    .ed-btn--primary:hover { box-shadow: 0 8px 22px -8px rgba(126,63,242,.85); background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .ed-btn--ghost { background: transparent; }
+    .ed-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .ed-status {
+      font-size: 12px; color: var(--text-muted);
+      padding: 6px 10px; border-radius: 8px;
+      background: rgba(255,255,255,.04);
+      min-width: 120px; text-align: center;
+      transition: color .2s, background .2s;
+    }
+    .ed-status.is-saved { color: var(--accent-data); background: rgba(31,200,169,.08); }
+    .ed-status.is-dirty { color: var(--accent-quantum); background: rgba(255,185,0,.08); }
+    .ed-status.is-error { color: var(--accent-storage); background: rgba(255,95,162,.08); }
+
+    /* Tabs */
+    .ed-tabs {
+      display: flex; gap: 2px; padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,11,20,.5);
+      flex: 0 0 auto;
+    }
+    .ed-tab {
+      padding: 10px 18px; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+    }
+    .ed-tab:hover { color: #fff; }
+    .ed-tab.is-active { color: #fff; border-bottom-color: var(--brand); }
+    .ed-tab__count { color: var(--text-muted); margin-left: 6px; font-size: 11px; }
+
+    /* Main split */
+    .ed-main { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); min-height: 0; }
+    @media (max-width: 900px) { .ed-main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } }
+
+    .ed-pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+    .ed-pane--editor { border-right: 1px solid var(--border); }
+    @media (max-width: 900px) { .ed-pane--editor { border-right: 0; border-bottom: 1px solid var(--border); } }
+
+    .ed-pane__head {
+      padding: 10px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      font-size: 12px; color: var(--text-dim); font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      background: rgba(255,255,255,.02);
+    }
+    .ed-pane__hint { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+    .ed-editor {
+      flex: 1; width: 100%; min-height: 0;
+      background: var(--bg-2);
+      color: var(--text);
+      border: 0; outline: 0; resize: none;
+      padding: 18px 22px;
+      font-family: 'JetBrains Mono', Consolas, 'SF Mono', monospace;
+      font-size: 13px; line-height: 1.65;
+      tab-size: 2;
+    }
+    .ed-editor::placeholder { color: var(--text-muted); }
+    .ed-editor::selection { background: rgba(126,63,242,.35); }
+
+    .ed-preview-wrap {
+      flex: 1; overflow: auto; padding: 24px;
+      background:
+        radial-gradient(800px 400px at 80% -10%, rgba(126,63,242,.10), transparent 60%),
+        radial-gradient(600px 320px at 10% 100%, rgba(0,164,239,.08), transparent 60%),
+        var(--bg);
+    }
+    .ed-preview {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+    .ed-slide {
+      background: #fff; color: #1a1f36;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      overflow: hidden; position: relative;
+      aspect-ratio: 16 / 9;
+    }
+    .ed-slide__num {
+      position: absolute; top: 10px; right: 14px; z-index: 10;
+      font-size: 11px; font-weight: 600;
+      background: rgba(10,11,20,.55); color: #fff;
+      padding: 3px 8px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      backdrop-filter: blur(4px);
+    }
+    .ed-slide__inner {
+      position: absolute; inset: 0;
+      transform-origin: 0 0;
+    }
+    .ed-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; min-height: 240px;
+      color: var(--text-muted); font-size: 13px;
+      gap: 6px; text-align: center; padding: 24px;
+    }
+    .ed-empty__title { font-size: 15px; color: var(--text-dim); font-weight: 600; }
+
+    /* Help drawer */
+    .ed-help {
+      position: fixed; right: 20px; bottom: 20px; z-index: 60;
+      max-width: 380px;
+      background: rgba(17,19,31,.96);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(12px);
+      transform: translateY(120%); transition: transform .25s ease;
+    }
+    .ed-help.is-open { transform: translateY(0); }
+    .ed-help__head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 600;
+    }
+    .ed-help__close {
+      color: var(--text-dim); font-size: 18px; line-height: 1;
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .ed-help__close:hover { background: var(--surface); color: #fff; }
+    .ed-help__body { padding: 14px 16px; font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
+    .ed-help__body code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(126,63,242,.14);
+      color: #cbb2ff;
+      padding: 1px 6px; border-radius: 5px;
+      font-size: 11.5px;
+    }
+    .ed-help__body p + p { margin-top: 10px; }
+    .ed-help__body ol { padding-left: 18px; margin: 8px 0; }
+    .ed-help__body li { margin-bottom: 6px; }
+    .ed-help__toggle {
+      position: fixed; right: 20px; bottom: 20px; z-index: 59;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff; font-size: 18px; font-weight: 700;
+      box-shadow: 0 8px 24px -6px rgba(126,63,242,.6);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .ed-help__toggle:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -6px rgba(126,63,242,.8); }
+  </style>
+</head>
+<body>
+  <!-- Top bar -->
+  <header class="ed-nav">
+    <div class="ed-nav__inner">
+      <a href="index.html" class="ed-nav__brand">
+        <svg class="ed-nav__logo" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <span>Build <strong>2026</strong> · Deck Editor</span>
+      </a>
+      <a href="index.html" class="ed-nav__back">← Back to recap</a>
+      <div class="ed-nav__spacer"></div>
+      <div class="ed-toolbar">
+        <select class="ed-select" id="deck-select" aria-label="Choose deck">
+          <option value="">— Loading decks —</option>
+        </select>
+        <button class="ed-btn ed-btn--ghost" id="btn-reset" title="Revert to the version stored in the repo">Reset</button>
+        <button class="ed-btn" id="btn-copy" title="Copy current markdown to clipboard">Copy MD</button>
+        <button class="ed-btn" id="btn-download" title="Download the edited markdown">Download .md</button>
+        <button class="ed-btn ed-btn--primary" id="btn-commit" title="Open this file on GitHub to commit your edits — the Action will then build the PPTX/PDF" disabled>Commit on GitHub →</button>
+        <span class="ed-status" id="status">Ready</span>
+      </div>
+      <div class="ed-toolbar ed-toolbar--secondary" id="gh-links" hidden>
+        <a class="ed-btn ed-btn--ghost" id="link-actions" target="_blank" rel="noopener" title="See the build action runs">⚙ Actions</a>
+        <a class="ed-btn ed-btn--ghost" id="link-release" target="_blank" rel="noopener" title="Download the freshly built PPTX/PDF">⬇ Latest PPTX</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Split editor / preview -->
+  <main class="ed-main">
+    <section class="ed-pane ed-pane--editor">
+      <div class="ed-pane__head">
+        <span>Markdown source</span>
+        <span class="ed-pane__hint" id="editor-hint">Auto-saves to this browser</span>
+      </div>
+      <textarea class="ed-editor" id="editor" spellcheck="false" placeholder="Choose a deck from the dropdown to start editing…"></textarea>
+    </section>
+
+    <section class="ed-pane ed-pane--preview">
+      <div class="ed-pane__head">
+        <span>Live preview</span>
+        <span class="ed-pane__hint" id="preview-hint">—</span>
+      </div>
+      <div class="ed-preview-wrap" id="preview-wrap">
+        <div class="ed-empty" id="empty">
+          <div class="ed-empty__title">No deck loaded yet</div>
+          <div>Pick a deck from the dropdown above. The preview renders the same Marp markdown your team builds the PPTX from.</div>
+        </div>
+        <div class="ed-preview" id="preview" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating help -->
+  <button class="ed-help__toggle" id="help-toggle" aria-label="Show usage help">?</button>
+  <aside class="ed-help" id="help">
+    <div class="ed-help__head">
+      <span>How this works</span>
+      <button class="ed-help__close" id="help-close" aria-label="Close help">×</button>
+    </div>
+    <div class="ed-help__body">
+      <p><strong>What this is.</strong> A browser editor for the three Microsoft Build 2026 customer decks. The preview uses the same Marp renderer that produces the live HTML on the site.</p>
+      <p><strong>Editing.</strong> Pick a deck, edit the markdown on the left, watch the preview update on the right. Changes auto-save to this browser (<code>localStorage</code>) — they survive a refresh but are local to you.</p>
+      <p><strong>Get a PPTX out — fully automated.</strong></p>
+      <ol>
+        <li>Edit the markdown here.</li>
+        <li>Click <strong>Commit on GitHub →</strong>. The GitHub web editor opens with your file pre-loaded; paste the content (already in your clipboard) and commit to <code>main</code>.</li>
+        <li>The <code>build-decks.yml</code> Action runs (~1 min), builds the <code>.pptx</code> and <code>.pdf</code>, and attaches them to the <strong>Latest PPTX</strong> release.</li>
+        <li>Click <strong>⬇ Latest PPTX</strong> to grab the freshly built file.</li>
+      </ol>
+      <p><strong>Local alternative.</strong> Click <strong>Download .md</strong>, then run <code>marp file.md --pptx</code> on your own machine.</p>
+      <p><strong>Reset</strong> reloads the canonical version from the repo and clears your local edits for that deck.</p>
+    </div>
+  </aside>
+
+  <!-- App logic -->
+  <script type="module">
+    import { Marp } from 'https://esm.sh/@marp-team/marp-core@4.2.0';
+
+    const DECKS = [
+      { id: 'business', label: 'Business deck',         file: 'build-2026-customer-deck-business.md' },
+      { id: 'mixed',    label: 'Business + technical',  file: 'build-2026-customer-deck-mixed.md' },
+      { id: 'ai',       label: 'AI deck (legacy)',      file: 'build-2026-ai-customer-deck.md' },
+    ];
+    const STORAGE_PREFIX = 'b26-deck::';
+    const marp = new Marp({ html: true, inlineSVG: true });
+
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      select:   $('deck-select'),
+      editor:   $('editor'),
+      preview:  $('preview'),
+      empty:    $('empty'),
+      status:   $('status'),
+      editorHint: $('editor-hint'),
+      previewHint: $('preview-hint'),
+      btnDownload: $('btn-download'),
+      btnReset:    $('btn-reset'),
+      btnCopy:     $('btn-copy'),
+      btnCommit:   $('btn-commit'),
+      ghLinks:     $('gh-links'),
+      linkActions: $('link-actions'),
+      linkRelease: $('link-release'),
+      help:        $('help'),
+      helpToggle:  $('help-toggle'),
+      helpClose:   $('help-close'),
+    };
+
+    /**
+     * Auto-detect the GitHub repo this site is served from.
+     * - On GitHub Pages: https://<owner>.github.io/<repo>/... → owner+repo
+     * - On a custom domain or localhost: leave empty (GH features hidden)
+     */
+    function detectRepo() {
+      const host = location.hostname;
+      if (host.endsWith('.github.io')) {
+        const owner = host.replace(/\.github\.io$/, '');
+        const path = location.pathname.split('/').filter(Boolean);
+        const repo = path[0];
+        if (owner && repo) return { owner, repo, branch: 'main' };
+      }
+      // Fall-back: hard-coded for this repo so the buttons work even from a custom domain.
+      return { owner: 'heisenberg-alt', repo: 'build-2026', branch: 'main' };
+    }
+    const REPO = detectRepo();
+
+    let current = null;            // current deck object
+    let originalSource = '';        // canonical text from the repo
+    let renderTimer = null;
+    let saveTimer = null;
+    let injectedStyleEl = null;     // <style> element for marp-emitted CSS, scoped to .ed-slide__inner
+
+    /* ---------------- helpers ---------------- */
+
+    function setStatus(text, kind) {
+      els.status.textContent = text;
+      els.status.classList.remove('is-saved', 'is-dirty', 'is-error');
+      if (kind) els.status.classList.add('is-' + kind);
+    }
+
+    function populateDeckSelect() {
+      els.select.innerHTML = '<option value="">— Choose a deck —</option>' +
+        DECKS.map(d => `<option value="${d.id}">${d.label}</option>`).join('');
+    }
+
+    async function fetchDeck(deck) {
+      const res = await fetch(deck.file, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Could not load ${deck.file} (${res.status})`);
+      return await res.text();
+    }
+
+    function loadFromStorage(deck) {
+      try { return localStorage.getItem(STORAGE_PREFIX + deck.id); }
+      catch { return null; }
+    }
+    function saveToStorage(deck, text) {
+      try { localStorage.setItem(STORAGE_PREFIX + deck.id, text); return true; }
+      catch { return false; }
+    }
+    function clearStorage(deck) {
+      try { localStorage.removeItem(STORAGE_PREFIX + deck.id); } catch {}
+    }
+
+    /* ---------------- rendering ---------------- */
+
+    function renderPreview() {
+      if (!current) return;
+      const md = els.editor.value;
+      let result;
+      try { result = marp.render(md, { htmlAsArray: true }); }
+      catch (err) {
+        els.previewHint.textContent = 'Render error — see console';
+        console.error('[deck-editor] Marp render failed:', err);
+        return;
+      }
+      const { html, css } = result;
+      // html is an array of slide strings when htmlAsArray:true
+      const slides = Array.isArray(html) ? html : [html];
+
+      els.empty.hidden = true;
+      els.preview.hidden = false;
+
+      // Inject (or replace) the Marp-emitted CSS, scoped to our preview slides.
+      // Marp emits :root and section selectors; we wrap by prepending a scope class.
+      if (!injectedStyleEl) {
+        injectedStyleEl = document.createElement('style');
+        injectedStyleEl.id = 'marp-css';
+        document.head.appendChild(injectedStyleEl);
+      }
+      injectedStyleEl.textContent = scopeMarpCss(css);
+
+      // Build slide tiles
+      els.preview.innerHTML = slides.map((slideHtml, i) => `
+        <div class="ed-slide">
+          <span class="ed-slide__num">Slide ${i + 1} / ${slides.length}</span>
+          <div class="ed-slide__inner" data-slide="${i}">${slideHtml}</div>
+        </div>
+      `).join('');
+
+      // Scale each slide's inner section (which is 1280x720 in Marp 16:9) to fill the tile.
+      // Use a ResizeObserver-style approach: measure tile, scale inner.
+      const SLIDE_W = 1280, SLIDE_H = 720;
+      const tiles = els.preview.querySelectorAll('.ed-slide');
+      tiles.forEach(tile => {
+        const inner = tile.querySelector('.ed-slide__inner');
+        const fit = () => {
+          const w = tile.clientWidth;
+          if (!w) return;
+          const scale = w / SLIDE_W;
+          inner.style.transform = `scale(${scale})`;
+          inner.style.width = SLIDE_W + 'px';
+          inner.style.height = SLIDE_H + 'px';
+        };
+        fit();
+        // refit on window resize
+        if (!window.__b26FitBound) {
+          window.addEventListener('resize', () => {
+            document.querySelectorAll('.ed-slide').forEach(t => {
+              const i = t.querySelector('.ed-slide__inner');
+              const w = t.clientWidth;
+              if (w) i.style.transform = `scale(${w / SLIDE_W})`;
+            });
+          });
+          window.__b26FitBound = true;
+        }
+      });
+
+      els.previewHint.textContent = `${slides.length} slide${slides.length === 1 ? '' : 's'}`;
+    }
+
+    /**
+     * Marp emits CSS that includes selectors like `section`, `:root`, etc.
+     * Browsers happily render those globally, which is fine since our slides
+     * are the only `section` elements on the page — but to be safe we prefix
+     * `:root` rules to apply only inside `.ed-slide__inner`.
+     */
+    function scopeMarpCss(css) {
+      // Marp's CSS uses `section` as the slide root. Each .ed-slide__inner contains a <section>.
+      // Replacing :root makes the custom-property cascade work inside our scaled container.
+      return css.replace(/:root/g, '.ed-slide__inner');
+    }
+
+    function scheduleRender() {
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(renderPreview, 180);
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        if (!current) return;
+        const ok = saveToStorage(current, els.editor.value);
+        const dirty = els.editor.value !== originalSource;
+        setStatus(ok ? (dirty ? 'Edited · saved locally' : 'Matches repo') : 'Save failed',
+                  ok ? (dirty ? 'dirty' : 'saved') : 'error');
+      }, 250);
+    }
+
+    /* ---------------- actions ---------------- */
+
+    async function loadDeck(id) {
+      const deck = DECKS.find(d => d.id === id);
+      if (!deck) return;
+      current = deck;
+      setStatus('Loading…');
+      try {
+        originalSource = await fetchDeck(deck);
+      } catch (err) {
+        console.error(err);
+        setStatus('Load failed', 'error');
+        els.editor.value = `# Could not load ${deck.file}\n\n${err.message}\n\n` +
+          `If you're running this locally with file:// the browser will block fetch — start a static server:\n\n` +
+          `    npx serve .\n\nThen open http://localhost:3000/editor.html`;
+        return;
+      }
+      const stored = loadFromStorage(deck);
+      const text = stored ?? originalSource;
+      els.editor.value = text;
+      const dirty = text !== originalSource;
+      setStatus(dirty ? 'Loaded · local edits restored' : 'Loaded from repo', dirty ? 'dirty' : 'saved');
+      els.editorHint.textContent = stored ? 'Local edits restored' : 'Auto-saves to this browser';
+      updateGitHubLinks();
+      renderPreview();
+    }
+
+    /* ---------------- GitHub integration ---------------- */
+
+    function updateGitHubLinks() {
+      if (!current || !REPO.owner) {
+        els.ghLinks.hidden = true;
+        els.btnCommit.disabled = true;
+        return;
+      }
+      els.ghLinks.hidden = false;
+      els.btnCommit.disabled = false;
+      els.linkActions.href = `https://github.com/${REPO.owner}/${REPO.repo}/actions/workflows/build-decks.yml`;
+      els.linkRelease.href = `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+    }
+
+    /**
+     * Open the GitHub web editor for the current file. GitHub's in-browser
+     * editor can't pre-populate file contents via URL, so we copy the markdown
+     * to the clipboard first — the user pastes once on the GitHub page.
+     */
+    async function commitOnGitHub() {
+      if (!current || !REPO.owner) return;
+      try {
+        await navigator.clipboard.writeText(els.editor.value);
+      } catch {
+        setStatus('Clipboard blocked — use Download instead', 'error');
+        return;
+      }
+      setStatus('Markdown copied → paste on GitHub', 'saved');
+      const url = `https://github.com/${REPO.owner}/${REPO.repo}/edit/${REPO.branch}/${current.file}`;
+      window.open(url, '_blank', 'noopener');
+    }
+
+    function downloadEdited() {
+      if (!current) return;
+      const blob = new Blob([els.editor.value], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = current.file;
+      document.body.appendChild(a); a.click();
+      a.remove(); URL.revokeObjectURL(url);
+      setStatus('Downloaded', 'saved');
+    }
+
+    async function copyEdited() {
+      if (!current) return;
+      try {
+        await navigator.clipboard.writeText(els.editor.value);
+        setStatus('Copied to clipboard', 'saved');
+      } catch {
+        setStatus('Copy failed', 'error');
+      }
+    }
+
+    async function resetDeck() {
+      if (!current) return;
+      if (!confirm(`Reset "${current.label}" to the version in the repo and discard your local edits?`)) return;
+      clearStorage(current);
+      els.editor.value = originalSource;
+      setStatus('Reset to repo version', 'saved');
+      els.editorHint.textContent = 'Auto-saves to this browser';
+      renderPreview();
+    }
+
+    /* ---------------- wire-up ---------------- */
+
+    populateDeckSelect();
+
+    els.select.addEventListener('change', (e) => {
+      if (e.target.value) loadDeck(e.target.value);
+    });
+    els.editor.addEventListener('input', () => { scheduleRender(); scheduleSave(); });
+    els.btnDownload.addEventListener('click', downloadEdited);
+    els.btnCopy.addEventListener('click', copyEdited);
+    els.btnReset.addEventListener('click', resetDeck);
+    els.btnCommit.addEventListener('click', commitOnGitHub);
+    els.helpToggle.addEventListener('click', () => els.help.classList.toggle('is-open'));
+    els.helpClose.addEventListener('click', () => els.help.classList.remove('is-open'));
+
+    // Auto-load deck via ?deck=business|mixed|ai
+    const initial = new URLSearchParams(location.search).get('deck');
+    if (initial && DECKS.some(d => d.id === initial)) {
+      els.select.value = initial;
+      loadDeck(initial);
+    }
+
+    // Warn before leaving with unsaved changes that haven't been downloaded
+    window.addEventListener('beforeunload', (e) => {
+      if (current && els.editor.value !== originalSource) {
+        // localStorage already persists, but remind users their .md isn't downloaded
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+name: Build decks (PPTX + PDF)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'build-2026-*.md'
+      - '.github/workflows/build-decks.yml'
+  workflow_dispatch:
+    inputs:
+      deck:
+        description: 'Which deck(s) to build?'
+        type: choice
+        options:
+          - all
+          - business
+          - mixed
+          - ai
+        default: all
+
+permissions:
+  contents: write   # needed to create / update the "latest-decks" release
+
+concurrency:
+  group: build-decks
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve files to build
+        id: files
+        shell: bash
+        run: |
+          set -euo pipefail
+          choice="${{ github.event.inputs.deck || 'all' }}"
+          declare -A MAP=(
+            [business]="build-2026-customer-deck-business.md"
+            [mixed]="build-2026-customer-deck-mixed.md"
+            [ai]="build-2026-ai-customer-deck.md"
+          )
+          if [[ "$choice" == "all" ]]; then
+            files="${MAP[business]} ${MAP[mixed]} ${MAP[ai]}"
+          else
+            files="${MAP[$choice]}"
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "Building: $files"
+
+      - name: Build PPTX (rasterized, matches the live HTML)
+        uses: docker://marpteam/marp-cli:v4.2.3
+        with:
+          args: --pptx --allow-local-files ${{ steps.files.outputs.files }}
+
+      - name: Build PDF
+        uses: docker://marpteam/marp-cli:v4.2.3
+        with:
+          args: --pdf --allow-local-files ${{ steps.files.outputs.files }}
+
+      - name: List build outputs
+        run: ls -lh build-2026-*.pptx build-2026-*.pdf 2>/dev/null || true
+
+      - name: Upload artifacts (always available, 30-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: decks-${{ github.run_number }}
+          path: |
+            build-2026-*.pptx
+            build-2026-*.pdf
+          if-no-files-found: error
+          retention-days: 30
+
+      # On main: also publish to a rolling release so non-Actions users can grab the file by URL.
+      - name: Publish to "latest-decks" release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-decks
+          name: Latest decks (auto-built)
+          body: |
+            Auto-built by `.github/workflows/build-decks.yml` from commit ${{ github.sha }}.
+
+            - Edit a deck via [editor.html](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/editor.html)
+            - Commit the edited `.md` to `main`
+            - This release is overwritten with the freshly built PPTX/PDF on every push
+          files: |
+            build-2026-*.pptx
+            build-2026-*.pdf
+          prerelease: false
+          make_latest: false

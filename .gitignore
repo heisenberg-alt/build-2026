@@ -5,3 +5,14 @@ node_modules/
 _site/
 .jekyll-cache/
 .sass-cache/
+
+# Generated deck artifacts — built by .github/workflows/build-decks.yml on push
+build-2026-*.pptx
+build-2026-*.pdf
+Build-2026-AI-Customer-Briefing.pptx
+~$*.pptx
+
+# Marp preview / QA exports
+preview-*/
+qa-*/
+
