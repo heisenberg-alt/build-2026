@@ -157,10 +157,8 @@
       font-family: 'JetBrains Mono', monospace;
       backdrop-filter: blur(4px);
     }
-    .ed-slide__inner {
-      position: absolute; inset: 0;
-      transform-origin: 0 0;
-    }
+    .ed-slide .marpit { width: 100%; height: 100%; display: block; }
+    .ed-slide .marpit > svg { width: 100%; height: 100%; display: block; }
     .ed-empty {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       height: 100%; min-height: 240px;
@@ -168,6 +166,8 @@
       gap: 6px; text-align: center; padding: 24px;
     }
     .ed-empty__title { font-size: 15px; color: var(--text-dim); font-weight: 600; }
+    /* `display:flex` above beats the browser's default `[hidden]{display:none}` (low specificity), so force it. */
+    [hidden] { display: none !important; }
 
     /* Help drawer */
     .ed-help {
@@ -387,77 +387,58 @@
       if (!current) return;
       const md = els.editor.value;
       let result;
-      try { result = marp.render(md, { htmlAsArray: true }); }
+      try { result = marp.render(md); }
       catch (err) {
         els.previewHint.textContent = 'Render error — see console';
         console.error('[deck-editor] Marp render failed:', err);
         return;
       }
       const { html, css } = result;
-      // html is an array of slide strings when htmlAsArray:true
-      const slides = Array.isArray(html) ? html : [html];
 
       els.empty.hidden = true;
       els.preview.hidden = false;
 
-      // Inject (or replace) the Marp-emitted CSS, scoped to our preview slides.
-      // Marp emits :root and section selectors; we wrap by prepending a scope class.
+      // Marp's CSS is already scoped to `div.marpit > svg > foreignObject > section`,
+      // so we inject it as-is. No selector rewriting needed.
       if (!injectedStyleEl) {
         injectedStyleEl = document.createElement('style');
         injectedStyleEl.id = 'marp-css';
         document.head.appendChild(injectedStyleEl);
       }
-      injectedStyleEl.textContent = scopeMarpCss(css);
+      injectedStyleEl.textContent = css;
 
-      // Build slide tiles
-      els.preview.innerHTML = slides.map((slideHtml, i) => `
-        <div class="ed-slide">
-          <span class="ed-slide__num">Slide ${i + 1} / ${slides.length}</span>
-          <div class="ed-slide__inner" data-slide="${i}">${slideHtml}</div>
-        </div>
-      `).join('');
+      // Parse the full marpit-wrapped HTML and pull each <svg> out.
+      // Each SVG has viewBox="0 0 1280 720" so it scales perfectly inside a 16:9 tile.
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const marpitRoot = doc.querySelector('.marpit');
+      const svgs = marpitRoot ? Array.from(marpitRoot.querySelectorAll(':scope > svg')) : [];
 
-      // Scale each slide's inner section (which is 1280x720 in Marp 16:9) to fill the tile.
-      // Use a ResizeObserver-style approach: measure tile, scale inner.
-      const SLIDE_W = 1280, SLIDE_H = 720;
-      const tiles = els.preview.querySelectorAll('.ed-slide');
-      tiles.forEach(tile => {
-        const inner = tile.querySelector('.ed-slide__inner');
-        const fit = () => {
-          const w = tile.clientWidth;
-          if (!w) return;
-          const scale = w / SLIDE_W;
-          inner.style.transform = `scale(${scale})`;
-          inner.style.width = SLIDE_W + 'px';
-          inner.style.height = SLIDE_H + 'px';
-        };
-        fit();
-        // refit on window resize
-        if (!window.__b26FitBound) {
-          window.addEventListener('resize', () => {
-            document.querySelectorAll('.ed-slide').forEach(t => {
-              const i = t.querySelector('.ed-slide__inner');
-              const w = t.clientWidth;
-              if (w) i.style.transform = `scale(${w / SLIDE_W})`;
-            });
-          });
-          window.__b26FitBound = true;
-        }
+      els.preview.innerHTML = '';
+      svgs.forEach((svg, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'ed-slide';
+
+        const num = document.createElement('span');
+        num.className = 'ed-slide__num';
+        num.textContent = `Slide ${i + 1} / ${svgs.length}`;
+        tile.appendChild(num);
+
+        // The CSS expects `div.marpit > svg > foreignObject > section` ancestry.
+        // Wrap each SVG in its own .marpit container so selectors match.
+        const wrap = document.createElement('div');
+        wrap.className = 'marpit';
+        const imported = document.importNode(svg, true);
+        imported.style.width = '100%';
+        imported.style.height = '100%';
+        imported.style.display = 'block';
+        wrap.appendChild(imported);
+        tile.appendChild(wrap);
+
+        els.preview.appendChild(tile);
       });
 
-      els.previewHint.textContent = `${slides.length} slide${slides.length === 1 ? '' : 's'}`;
-    }
-
-    /**
-     * Marp emits CSS that includes selectors like `section`, `:root`, etc.
-     * Browsers happily render those globally, which is fine since our slides
-     * are the only `section` elements on the page — but to be safe we prefix
-     * `:root` rules to apply only inside `.ed-slide__inner`.
-     */
-    function scopeMarpCss(css) {
-      // Marp's CSS uses `section` as the slide root. Each .ed-slide__inner contains a <section>.
-      // Replacing :root makes the custom-property cascade work inside our scaled container.
-      return css.replace(/:root/g, '.ed-slide__inner');
+      els.previewHint.textContent = `${svgs.length} slide${svgs.length === 1 ? '' : 's'}`;
     }
 
     function scheduleRender() {
