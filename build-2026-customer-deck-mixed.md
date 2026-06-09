@@ -343,7 +343,7 @@ style: |
 
 # Microsoft Build 2026
 ## A new system for software — for the people who run it and the people who build it
-### Customer briefing for <strong></strong>
+### Customer briefing for <strong>{{CUSTOMER_NAME}}</strong>
 
 San Francisco · June 2–3, 2026
 
@@ -1360,8 +1360,8 @@ Azure Files on macOS · <strong>aka.ms/azurefilesmacos</strong>
 
 # Thank you
 
-## 
-10.06.2026
+## {{PRESENTER}}
+{{DATE}}
 
 The live Build 2026 recap site lives in this workspace — every announcement, with deep links and imagery.
 

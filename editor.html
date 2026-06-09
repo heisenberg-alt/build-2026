@@ -901,6 +901,7 @@
           label: pm[1].replace(/_/g, ' ').toLowerCase()
             .replace(/\b\w/g, c => c.toUpperCase()),
           value: pm[0],
+          original: pm[0],
           start: pm.index,
           end: pm.index + pm[0].length,
           multiline: false,
@@ -922,7 +923,10 @@
       let out = '';
       let cursor = 0;
       for (const f of sorted) {
-        out += slide.raw.slice(cursor, f.start) + f.value;
+        // A blank placeholder means "not filled in" — keep the original {{TOKEN}} so the
+        // template stays intact instead of committing empty headings/labels.
+        const v = (f.isPlaceholder && !f.value.trim()) ? f.original : f.value;
+        out += slide.raw.slice(cursor, f.start) + v;
         cursor = f.end;
       }
       out += slide.raw.slice(cursor);
@@ -1066,8 +1070,8 @@
       if (!useTextarea) input.type = 'text';
       input.value = field.value;
       if (field.isPlaceholder) {
-        input.placeholder = field.value;
-        if (field.value === field.value.toUpperCase()) input.value = ''; // empty for true {{TOKEN}} pristine
+        input.placeholder = `${field.label} — leave blank to keep ${field.original}`;
+        if (field.value === field.original) input.value = ''; // pristine token → show empty
       }
       input.addEventListener('input', () => {
         field.value = input.value;
@@ -1464,6 +1468,9 @@
     // Boot
     showIntroView();
     setStatus('Ready');
+
+    // Debug/QA hook — used by automated round-trip tests
+    window.__deckEditor = { state, parseDeck, rebuildDeck, rebuildSlide, extractFields };
 
     // Auto-load via ?deck=
     const initial = new URLSearchParams(location.search).get('deck');
