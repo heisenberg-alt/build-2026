@@ -1239,9 +1239,24 @@
     });
 
     /* ─────────── In-page GitHub commit & PPTX build ─────────── */
-    const TOKEN_KEY = 'b26-gh-token';
+    // If set, all commit/build/download traffic goes through the Azure Function proxy and
+    // users only need the shared passcode — no GitHub account or token required.
+    // Example: 'https://func-deckproxy-xxxxxxx.azurewebsites.net'
+    const PROXY_URL = 'https://func-deckproxy-pmprgspio4maq.azurewebsites.net';
+    const USE_PROXY = !!PROXY_URL;
+
+    const TOKEN_KEY = USE_PROXY ? 'b26-passcode' : 'b26-gh-token';
     function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } }
     function setToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} }
+
+    // Re-label the credential panel for passcode mode
+    if (USE_PROXY) {
+      els.finTokenPanel.querySelector('b').textContent = 'Enter the shared passcode';
+      els.finTokenPanel.querySelector('p').innerHTML =
+        'Ask the deck owner for the passcode. It is stored only in this browser and sent only to the secure proxy.';
+      els.finTokenInput.placeholder = 'passcode';
+      els.finTokenForget.textContent = 'forget saved passcode';
+    }
 
     function b64EncodeUtf8(str) {
       const bytes = new TextEncoder().encode(str);
@@ -1272,10 +1287,30 @@
 
     function pptxName(deck) { return deck.file.replace(/\.md$/, '.pptx'); }
     function pptxAssetUrl(deck) {
+      if (USE_PROXY) return `${PROXY_URL}/api/pptx?file=${encodeURIComponent(deck.file)}&passcode=${encodeURIComponent(getToken())}`;
       return `https://github.com/${REPO.owner}/${REPO.repo}/releases/download/latest-decks/${pptxName(deck)}`;
     }
 
+    async function proxyFetch(path, opts = {}) {
+      const res = await fetch(`${PROXY_URL}${path}`, opts);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const err = new Error(body.error || res.statusText);
+        err.status = res.status;
+        throw err;
+      }
+      return body;
+    }
+
     async function commitDeck() {
+      if (USE_PROXY) {
+        const out = await proxyFetch('/api/commit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ passcode: getToken(), file: state.deck.file, content: state.source }),
+        });
+        return out.sha;
+      }
       const path = state.deck.file;
       let sha;
       try {
@@ -1298,10 +1333,18 @@
       const deadline = Date.now() + 8 * 60 * 1000;
       while (Date.now() < deadline) {
         await new Promise(r => setTimeout(r, 8000));
-        let runs;
-        try { runs = await gh(`/repos/${REPO.owner}/${REPO.repo}/actions/runs?head_sha=${commitSha}&per_page=5`); }
-        catch { continue; }
-        const run = (runs.workflow_runs || [])[0];
+        let run;
+        if (USE_PROXY) {
+          let st;
+          try { st = await proxyFetch(`/api/build-status?sha=${commitSha}&passcode=${encodeURIComponent(getToken())}`); }
+          catch { continue; }
+          run = st.found ? st : null;
+        } else {
+          let runs;
+          try { runs = await gh(`/repos/${REPO.owner}/${REPO.repo}/actions/runs?head_sha=${commitSha}&per_page=5`); }
+          catch { continue; }
+          run = (runs.workflow_runs || [])[0];
+        }
         if (!run) { onTick('⏳ Waiting for the build to start…'); continue; }
         if (run.status !== 'completed') { onTick(`🔨 Build ${run.status.replace('_', ' ')}… (~1–2 min)`); continue; }
         if (run.conclusion === 'success') return run;
@@ -1331,7 +1374,9 @@
         if (err.status === 401 || err.status === 403) {
           setToken('');
           els.finTokenPanel.hidden = false;
-          tick(`❌ Token rejected (${err.message}). Paste a valid token and try again.`);
+          tick(USE_PROXY
+            ? `❌ Passcode rejected. Enter the correct passcode and try again.`
+            : `❌ Token rejected (${err.message}). Paste a valid token and try again.`);
         } else {
           tick(`❌ Failed: ${err.message}`);
         }

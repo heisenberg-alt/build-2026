@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "${AZURE_ENV_NAME}" },
+    "location": { "value": "${AZURE_LOCATION}" },
+    "githubPat": { "value": "${GITHUB_PAT}" },
+    "editorPasscode": { "value": "${EDITOR_PASSCODE}" },
+    "githubRepo": { "value": "${GITHUB_REPO=heisenberg-alt/build-2026}" },
+    "githubBranch": { "value": "${GITHUB_BRANCH=main}" },
+    "allowedOrigins": { "value": "${ALLOWED_ORIGINS=https://heisenberg-alt.github.io,http://localhost:8080,http://127.0.0.1:8080}" }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "build-2026-deck-proxy",
+  "version": "1.0.0",
+  "description": "Commit & PPTX proxy for the Build 2026 deck editor — lets passcode users commit deck edits and download built PPTX without a GitHub account.",
+  "main": "src/functions/*.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.6.0"
+  }
+}

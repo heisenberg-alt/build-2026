@@ -16,3 +16,11 @@ Build-2026-AI-Customer-Briefing.pptx
 preview-*/
 qa-*/
 
+# Azure Functions proxy — secrets & azd state stay local
+api/local.settings.json
+.azure/*
+!.azure/deployment-plan.md
+
+
+# Compiled bicep artifact
+infra/main.json
