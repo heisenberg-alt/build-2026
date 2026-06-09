@@ -4,111 +4,93 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deck Editor — Microsoft Build 2026</title>
-  <meta name="description" content="Edit the Microsoft Build 2026 customer deck markdown sources with a live Marp preview." />
+  <meta name="description" content="Edit the Microsoft Build 2026 customer decks slide-by-slide with a guided wizard." />
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://esm.sh" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
-    /* Page-specific layout — leans on the existing dark palette in style.css */
     html, body { height: 100%; overflow: hidden; }
     body { display: flex; flex-direction: column; }
+    [hidden] { display: none !important; }
 
+    /* ────────── Top bar ────────── */
     .ed-nav {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(10,11,20,.85);
+      position: sticky; top: 0; z-index: 50; flex: 0 0 auto;
+      background: rgba(10,11,20,.88);
       backdrop-filter: saturate(160%) blur(14px);
       -webkit-backdrop-filter: saturate(160%) blur(14px);
       border-bottom: 1px solid var(--border);
-      flex: 0 0 auto;
     }
     .ed-nav__inner {
-      max-width: 100%; padding: 12px 20px;
+      padding: 12px 20px;
       display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     }
     .ed-nav__brand {
       display: flex; align-items: center; gap: 10px;
-      font-weight: 600; font-size: 16px;
-      text-decoration: none; color: inherit;
+      font-weight: 600; font-size: 16px; text-decoration: none; color: inherit;
     }
     .ed-nav__brand strong {
       background: var(--grad-text);
       -webkit-background-clip: text; background-clip: text; color: transparent;
       font-weight: 800;
     }
-    .ed-nav__logo { width: 20px; height: 20px; display: block; }
+    .ed-nav__logo { width: 20px; height: 20px; }
     .ed-nav__back {
-      color: var(--text-dim); font-size: 13px; font-weight: 500;
+      color: var(--text-dim); font-size: 13px;
       padding: 6px 12px; border-radius: 8px;
       transition: background .2s, color .2s;
     }
     .ed-nav__back:hover { background: var(--surface); color: #fff; }
     .ed-nav__spacer { flex: 1; }
 
-    .ed-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .ed-toolbar--secondary {
-      width: 100%; padding: 6px 0 0;
-      border-top: 1px dashed var(--border);
-      margin-top: 8px;
-      font-size: 12px;
+    .ed-mode-toggle {
+      display: inline-flex; padding: 3px; gap: 0;
+      background: rgba(255,255,255,.05); border-radius: 999px;
+      border: 1px solid var(--border);
     }
-    .ed-toolbar--secondary .ed-btn { font-size: 12px; padding: 6px 12px; }
-    .ed-select, .ed-btn {
+    .ed-mode-toggle button {
+      padding: 6px 14px; font-size: 12.5px; font-weight: 600;
+      color: var(--text-dim); border-radius: 999px; transition: all .15s;
+    }
+    .ed-mode-toggle button.is-active {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff; box-shadow: 0 4px 14px -4px rgba(126,63,242,.55);
+    }
+    .ed-mode-toggle button:not(.is-active):hover { color: #fff; background: rgba(255,255,255,.05); }
+
+    .ed-btn {
       font: inherit; font-size: 13px; font-weight: 500;
       padding: 8px 14px; border-radius: 10px;
       border: 1px solid var(--border-strong);
       background: var(--surface); color: var(--text);
       transition: background .15s, border-color .15s, transform .1s;
     }
-    .ed-select:hover, .ed-btn:hover { border-color: rgba(255,255,255,.32); background: var(--surface-2); }
+    .ed-btn:hover { border-color: rgba(255,255,255,.32); background: var(--surface-2); }
     .ed-btn:active { transform: translateY(1px); }
     .ed-btn--primary {
       background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      border-color: transparent;
-      color: #fff;
+      border-color: transparent; color: #fff;
       box-shadow: 0 6px 18px -8px rgba(126,63,242,.6);
     }
-    .ed-btn--primary:hover { box-shadow: 0 8px 22px -8px rgba(126,63,242,.85); background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .ed-btn--primary:hover { background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 8px 22px -8px rgba(126,63,242,.85); }
     .ed-btn--ghost { background: transparent; }
     .ed-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
     .ed-status {
       font-size: 12px; color: var(--text-muted);
       padding: 6px 10px; border-radius: 8px;
       background: rgba(255,255,255,.04);
-      min-width: 120px; text-align: center;
       transition: color .2s, background .2s;
     }
     .ed-status.is-saved { color: var(--accent-data); background: rgba(31,200,169,.08); }
     .ed-status.is-dirty { color: var(--accent-quantum); background: rgba(255,185,0,.08); }
     .ed-status.is-error { color: var(--accent-storage); background: rgba(255,95,162,.08); }
 
-    /* Tabs */
-    .ed-tabs {
-      display: flex; gap: 2px; padding: 0 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(10,11,20,.5);
-      flex: 0 0 auto;
-    }
-    .ed-tab {
-      padding: 10px 18px; font-size: 13px; font-weight: 500;
-      color: var(--text-dim); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color .15s, border-color .15s;
-    }
-    .ed-tab:hover { color: #fff; }
-    .ed-tab.is-active { color: #fff; border-bottom-color: var(--brand); }
-    .ed-tab__count { color: var(--text-muted); margin-left: 6px; font-size: 11px; }
-
-    /* Main split */
-    .ed-main { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); min-height: 0; }
-    @media (max-width: 900px) { .ed-main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } }
-
-    .ed-pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
-    .ed-pane--editor { border-right: 1px solid var(--border); }
-    @media (max-width: 900px) { .ed-pane--editor { border-right: 0; border-bottom: 1px solid var(--border); } }
-
+    /* ────────── Layout shell ────────── */
+    .ed-main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
     .ed-pane__head {
       padding: 10px 18px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -118,37 +100,232 @@
     }
     .ed-pane__hint { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: none; letter-spacing: 0; }
 
+    /* ────────── WIZARD ────────── */
+    /* Intro / deck picker */
+    .ed-intro {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px; overflow: auto;
+      background:
+        radial-gradient(900px 500px at 80% -10%, rgba(126,63,242,.12), transparent 60%),
+        radial-gradient(700px 400px at 10% 100%, rgba(0,164,239,.10), transparent 60%);
+    }
+    .ed-intro__inner { max-width: 880px; width: 100%; }
+    .ed-intro h1 {
+      font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px;
+      background: var(--grad-text);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .ed-intro__lede { color: var(--text-dim); font-size: 16px; line-height: 1.55; margin-bottom: 28px; max-width: 640px; }
+    .ed-intro__steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 32px;
+    }
+    @media (max-width: 720px) { .ed-intro__steps { grid-template-columns: 1fr; } }
+    .ed-intro__step {
+      padding: 16px 18px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-dim);
+    }
+    .ed-intro__step b { display: block; color: #fff; margin-bottom: 4px; font-size: 14px; }
+    .ed-intro__step span {
+      display: inline-block; width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff; font-weight: 700; font-size: 12px;
+      text-align: center; line-height: 22px; margin-right: 8px;
+    }
+    .ed-deck-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;
+    }
+    .ed-deck-card {
+      padding: 18px 20px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); text-align: left; cursor: pointer;
+      transition: transform .15s, border-color .15s, box-shadow .15s;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ed-deck-card:hover {
+      transform: translateY(-2px); border-color: var(--brand);
+      box-shadow: 0 12px 24px -10px rgba(126,63,242,.4);
+    }
+    .ed-deck-card__name { font-size: 15px; font-weight: 700; color: #fff; }
+    .ed-deck-card__desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.45; }
+    .ed-deck-card__meta { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+    /* Wizard editing screen */
+    .ed-wiz {
+      flex: 1; display: grid; grid-template-columns: 280px minmax(0,1fr) minmax(0,1fr);
+      min-height: 0;
+    }
+    @media (max-width: 1100px) { .ed-wiz { grid-template-columns: 240px 1fr; } .ed-wiz__preview { display: none; } }
+    @media (max-width: 760px) { .ed-wiz { grid-template-columns: 1fr; } .ed-wiz__sidebar { display: none; } }
+
+    .ed-wiz__sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .ed-wiz__progress {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    .ed-wiz__progress-bar {
+      height: 4px; background: var(--surface); border-radius: 999px; overflow: hidden; margin-top: 10px;
+    }
+    .ed-wiz__progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      transition: width .25s ease;
+    }
+    .ed-wiz__progress-text { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; }
+    .ed-wiz__progress-text b { color: #fff; font-weight: 600; }
+    .ed-wiz__list { flex: 1; overflow: auto; padding: 8px; }
+    .ed-wiz__item {
+      width: 100%; padding: 8px 12px; text-align: left;
+      border-radius: 8px; font-size: 13px; color: var(--text-dim);
+      display: flex; align-items: center; gap: 10px;
+      transition: background .12s, color .12s;
+      cursor: pointer;
+    }
+    .ed-wiz__item:hover { background: rgba(255,255,255,.04); color: #fff; }
+    .ed-wiz__item.is-active { background: rgba(126,63,242,.18); color: #fff; }
+    .ed-wiz__item.is-done .ed-wiz__item-num { background: var(--accent-data); color: #0a0b14; }
+    .ed-wiz__item-num {
+      flex: 0 0 22px; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--surface); color: var(--text-muted);
+      font-size: 11px; font-weight: 700; line-height: 22px; text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .ed-wiz__item.is-active .ed-wiz__item-num { background: var(--brand); color: #fff; }
+    .ed-wiz__item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ed-wiz__finish-row {
+      padding: 12px 14px; border-top: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+
+    .ed-wiz__form { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--border); }
+    .ed-wiz__form-head {
+      padding: 18px 26px 14px;
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .ed-wiz__form-step { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .ed-wiz__form-title { font-size: 22px; font-weight: 700; color: #fff; margin: 0; flex: 1 1 100%; }
+    .ed-wiz__form-body { flex: 1; overflow: auto; padding: 18px 26px 24px; }
+    .ed-wiz__empty {
+      padding: 36px 18px; text-align: center; color: var(--text-muted);
+      font-size: 14px; line-height: 1.55;
+    }
+    .ed-wiz__empty b { color: var(--text-dim); display: block; font-size: 15px; margin-bottom: 6px; }
+
+    .ed-field { margin-bottom: 18px; }
+    .ed-field__label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: var(--text-muted); font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .ed-field__kind {
+      padding: 1px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 700;
+      letter-spacing: .04em; background: var(--surface-2); color: var(--text-dim);
+    }
+    .ed-field__kind.is-h1 { background: rgba(126,63,242,.20); color: #cbb2ff; }
+    .ed-field__kind.is-h2 { background: rgba(0,164,239,.18); color: #8de1ff; }
+    .ed-field__kind.is-h3 { background: rgba(0,164,239,.12); color: #8de1ff; }
+    .ed-field__kind.is-placeholder { background: rgba(255,185,0,.20); color: #ffe080; }
+    .ed-field__kind.is-table-header { background: rgba(31,200,169,.18); color: #7fe8d2; }
+    .ed-field__input, .ed-field__textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid var(--border-strong); border-radius: 10px;
+      background: var(--bg-2); color: #fff;
+      font: inherit; font-size: 14px; line-height: 1.5;
+      transition: border-color .12s, box-shadow .12s;
+      font-family: inherit;
+    }
+    .ed-field__textarea { min-height: 64px; resize: vertical; font-family: inherit; }
+    .ed-field__input:focus, .ed-field__textarea:focus {
+      outline: 0; border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(0,164,239,.18);
+    }
+    .ed-field__input.is-h1 { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .ed-field__input.is-h2 { font-size: 17px; font-weight: 500; color: var(--text-dim); }
+    .ed-field__input.is-placeholder { border-color: rgba(255,185,0,.4); }
+
+    .ed-wiz__form-foot {
+      padding: 14px 26px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,.02);
+    }
+    .ed-wiz__form-foot .spacer { flex: 1; }
+
+    /* Preview (right column) */
+    .ed-wiz__preview { display: flex; flex-direction: column; min-height: 0; }
+    .ed-wiz__preview-body {
+      flex: 1; padding: 22px; overflow: auto;
+      background:
+        radial-gradient(800px 400px at 80% -10%, rgba(126,63,242,.08), transparent 60%),
+        radial-gradient(600px 320px at 10% 100%, rgba(0,164,239,.06), transparent 60%),
+        var(--bg);
+    }
+    .ed-slide {
+      background: #fff; color: #1a1f36; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow); overflow: hidden; position: relative;
+      aspect-ratio: 16 / 9; max-width: 100%;
+    }
+    .ed-slide .marpit { width: 100%; height: 100%; display: block; }
+    .ed-slide .marpit > svg { width: 100%; height: 100%; display: block; }
+
+    /* Finish screen */
+    .ed-finish {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px; overflow: auto;
+      background:
+        radial-gradient(900px 500px at 50% -10%, rgba(31,200,169,.14), transparent 60%),
+        radial-gradient(600px 320px at 10% 100%, rgba(0,164,239,.08), transparent 60%);
+    }
+    .ed-finish__inner { max-width: 700px; width: 100%; text-align: center; }
+    .ed-finish__icon {
+      width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 18px;
+      background: linear-gradient(135deg, var(--accent-data), var(--brand));
+      display: flex; align-items: center; justify-content: center;
+      color: #0a0b14; font-size: 32px; font-weight: 800;
+      box-shadow: 0 12px 32px -8px rgba(31,200,169,.5);
+    }
+    .ed-finish h1 { font-size: 32px; font-weight: 800; margin: 0 0 10px; color: #fff; }
+    .ed-finish__lede { color: var(--text-dim); font-size: 15px; margin-bottom: 28px; line-height: 1.55; }
+    .ed-finish__actions {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;
+    }
+    @media (max-width: 720px) { .ed-finish__actions { grid-template-columns: 1fr; } }
+    .ed-finish__action {
+      display: flex; flex-direction: column; gap: 8px; padding: 18px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      text-align: left; cursor: pointer; color: inherit; text-decoration: none;
+      transition: transform .12s, border-color .12s, box-shadow .12s;
+    }
+    .ed-finish__action:hover { transform: translateY(-2px); border-color: var(--brand); box-shadow: 0 12px 24px -10px rgba(126,63,242,.35); }
+    .ed-finish__action b { color: #fff; font-size: 14px; font-weight: 700; }
+    .ed-finish__action span { color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+    .ed-finish__action--primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); border-color: transparent; }
+    .ed-finish__action--primary b, .ed-finish__action--primary span { color: #fff; }
+    .ed-finish__back { color: var(--text-dim); font-size: 13px; }
+    .ed-finish__back:hover { color: #fff; }
+
+    /* ────────── ADVANCED MODE ────────── */
+    .ed-adv { flex: 1; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); min-height: 0; }
+    @media (max-width: 900px) { .ed-adv { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } }
+    .ed-adv__pane { display: flex; flex-direction: column; min-height: 0; }
+    .ed-adv__pane--left { border-right: 1px solid var(--border); }
+    @media (max-width: 900px) { .ed-adv__pane--left { border-right: 0; border-bottom: 1px solid var(--border); } }
     .ed-editor {
       flex: 1; width: 100%; min-height: 0;
-      background: var(--bg-2);
-      color: var(--text);
+      background: var(--bg-2); color: var(--text);
       border: 0; outline: 0; resize: none;
       padding: 18px 22px;
       font-family: 'JetBrains Mono', Consolas, 'SF Mono', monospace;
-      font-size: 13px; line-height: 1.65;
-      tab-size: 2;
+      font-size: 13px; line-height: 1.65; tab-size: 2;
     }
-    .ed-editor::placeholder { color: var(--text-muted); }
     .ed-editor::selection { background: rgba(126,63,242,.35); }
-
-    .ed-preview-wrap {
+    .ed-adv__preview-wrap {
       flex: 1; overflow: auto; padding: 24px;
       background:
         radial-gradient(800px 400px at 80% -10%, rgba(126,63,242,.10), transparent 60%),
         radial-gradient(600px 320px at 10% 100%, rgba(0,164,239,.08), transparent 60%),
         var(--bg);
     }
-    .ed-preview {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; flex-direction: column; gap: 24px;
-    }
-    .ed-slide {
-      background: #fff; color: #1a1f36;
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow);
-      overflow: hidden; position: relative;
-      aspect-ratio: 16 / 9;
-    }
+    .ed-adv__preview { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
     .ed-slide__num {
       position: absolute; top: 10px; right: 14px; z-index: 10;
       font-size: 11px; font-weight: 600;
@@ -157,65 +334,15 @@
       font-family: 'JetBrains Mono', monospace;
       backdrop-filter: blur(4px);
     }
-    .ed-slide .marpit { width: 100%; height: 100%; display: block; }
-    .ed-slide .marpit > svg { width: 100%; height: 100%; display: block; }
-    .ed-empty {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100%; min-height: 240px;
-      color: var(--text-muted); font-size: 13px;
-      gap: 6px; text-align: center; padding: 24px;
-    }
-    .ed-empty__title { font-size: 15px; color: var(--text-dim); font-weight: 600; }
-    /* `display:flex` above beats the browser's default `[hidden]{display:none}` (low specificity), so force it. */
-    [hidden] { display: none !important; }
 
-    /* Help drawer */
-    .ed-help {
-      position: fixed; right: 20px; bottom: 20px; z-index: 60;
-      max-width: 380px;
-      background: rgba(17,19,31,.96);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(12px);
-      transform: translateY(120%); transition: transform .25s ease;
-    }
-    .ed-help.is-open { transform: translateY(0); }
-    .ed-help__head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-      font-size: 13px; font-weight: 600;
-    }
-    .ed-help__close {
-      color: var(--text-dim); font-size: 18px; line-height: 1;
-      padding: 2px 8px; border-radius: 6px;
-    }
-    .ed-help__close:hover { background: var(--surface); color: #fff; }
-    .ed-help__body { padding: 14px 16px; font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
-    .ed-help__body code {
-      font-family: 'JetBrains Mono', monospace;
-      background: rgba(126,63,242,.14);
-      color: #cbb2ff;
-      padding: 1px 6px; border-radius: 5px;
-      font-size: 11.5px;
-    }
-    .ed-help__body p + p { margin-top: 10px; }
-    .ed-help__body ol { padding-left: 18px; margin: 8px 0; }
-    .ed-help__body li { margin-bottom: 6px; }
-    .ed-help__toggle {
-      position: fixed; right: 20px; bottom: 20px; z-index: 59;
-      width: 44px; height: 44px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      color: #fff; font-size: 18px; font-weight: 700;
-      box-shadow: 0 8px 24px -6px rgba(126,63,242,.6);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform .15s, box-shadow .15s;
-    }
-    .ed-help__toggle:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -6px rgba(126,63,242,.8); }
+    .ed-adv__toolbar { padding: 8px 14px; border-top: 1px solid var(--border); background: rgba(255,255,255,.02); display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; align-items: center; }
+    .ed-adv__toolbar .spacer { flex: 1; }
+    .ed-adv__toolbar a { color: var(--text-dim); font-size: 12px; padding: 4px 8px; border-radius: 6px; }
+    .ed-adv__toolbar a:hover { background: var(--surface); color: #fff; }
   </style>
 </head>
 <body>
-  <!-- Top bar -->
+  <!-- ────────── Top bar ────────── -->
   <header class="ed-nav">
     <div class="ed-nav__inner">
       <a href="index.html" class="ed-nav__brand">
@@ -229,128 +356,226 @@
       </a>
       <a href="index.html" class="ed-nav__back">← Back to recap</a>
       <div class="ed-nav__spacer"></div>
-      <div class="ed-toolbar">
-        <select class="ed-select" id="deck-select" aria-label="Choose deck">
-          <option value="">— Loading decks —</option>
-        </select>
-        <button class="ed-btn ed-btn--ghost" id="btn-reset" title="Revert to the version stored in the repo">Reset</button>
-        <button class="ed-btn" id="btn-copy" title="Copy current markdown to clipboard">Copy MD</button>
-        <button class="ed-btn" id="btn-download" title="Download the edited markdown">Download .md</button>
-        <button class="ed-btn ed-btn--primary" id="btn-commit" title="Open this file on GitHub to commit your edits — the Action will then build the PPTX/PDF" disabled>Commit on GitHub →</button>
-        <span class="ed-status" id="status">Ready</span>
+
+      <div class="ed-mode-toggle" role="tablist" aria-label="Editor mode">
+        <button id="mode-wizard"   class="is-active" role="tab" aria-selected="true"  title="Edit text only, step by step (recommended)">✨ Guided</button>
+        <button id="mode-advanced" role="tab" aria-selected="false" title="Edit the full markdown + styling (for technical users)">⚙ Advanced</button>
       </div>
-      <div class="ed-toolbar ed-toolbar--secondary" id="gh-links" hidden>
-        <a class="ed-btn ed-btn--ghost" id="link-actions" target="_blank" rel="noopener" title="See the build action runs">⚙ Actions</a>
-        <a class="ed-btn ed-btn--ghost" id="link-release" target="_blank" rel="noopener" title="Download the freshly built PPTX/PDF">⬇ Latest PPTX</a>
-      </div>
+
+      <span class="ed-status" id="status">Ready</span>
     </div>
   </header>
 
-  <!-- Split editor / preview -->
+  <!-- ────────── App ────────── -->
   <main class="ed-main">
-    <section class="ed-pane ed-pane--editor">
-      <div class="ed-pane__head">
-        <span>Markdown source</span>
-        <span class="ed-pane__hint" id="editor-hint">Auto-saves to this browser</span>
+    <!-- WIZARD INTRO -->
+    <section class="ed-intro" id="intro">
+      <div class="ed-intro__inner">
+        <h1>Edit a customer deck in 3 simple steps</h1>
+        <p class="ed-intro__lede">
+          Pick a deck, work through its slides answering plain-text questions, and walk away with a
+          PowerPoint file. Styling, layout and brand colours stay locked — you can only change the words.
+        </p>
+        <div class="ed-intro__steps">
+          <div class="ed-intro__step"><b><span>1</span>Pick a deck</b>Choose which customer story you want to customize.</div>
+          <div class="ed-intro__step"><b><span>2</span>Edit the words</b>Walk slide-by-slide; type new text into clearly-labelled fields.</div>
+          <div class="ed-intro__step"><b><span>3</span>Get your PPTX</b>Save the changes and download the freshly built deck.</div>
+        </div>
+        <div class="ed-deck-grid" id="deck-grid">
+          <!-- injected -->
+        </div>
       </div>
-      <textarea class="ed-editor" id="editor" spellcheck="false" placeholder="Choose a deck from the dropdown to start editing…"></textarea>
     </section>
 
-    <section class="ed-pane ed-pane--preview">
-      <div class="ed-pane__head">
-        <span>Live preview</span>
-        <span class="ed-pane__hint" id="preview-hint">—</span>
-      </div>
-      <div class="ed-preview-wrap" id="preview-wrap">
-        <div class="ed-empty" id="empty">
-          <div class="ed-empty__title">No deck loaded yet</div>
-          <div>Pick a deck from the dropdown above. The preview renders the same Marp markdown your team builds the PPTX from.</div>
+    <!-- WIZARD EDIT -->
+    <section class="ed-wiz" id="wizard" hidden>
+      <aside class="ed-wiz__sidebar">
+        <div class="ed-wiz__progress">
+          <div class="ed-wiz__progress-text">
+            <b id="wiz-prog-label">Slide 1 of 25</b>
+            <span id="wiz-prog-pct">4%</span>
+          </div>
+          <div class="ed-wiz__progress-bar"><div class="ed-wiz__progress-fill" id="wiz-prog-fill" style="width:4%"></div></div>
         </div>
-        <div class="ed-preview" id="preview" hidden></div>
+        <div class="ed-wiz__list" id="wiz-list"><!-- injected --></div>
+        <div class="ed-wiz__finish-row">
+          <button class="ed-btn ed-btn--primary" id="wiz-jump-finish" style="width:100%">I'm done — get my PPTX →</button>
+        </div>
+      </aside>
+
+      <section class="ed-wiz__form">
+        <div class="ed-wiz__form-head">
+          <span class="ed-wiz__form-step" id="wiz-step">Slide 1</span>
+          <h2 class="ed-wiz__form-title" id="wiz-title">Loading…</h2>
+        </div>
+        <div class="ed-wiz__form-body" id="wiz-fields"></div>
+        <div class="ed-wiz__form-foot">
+          <button class="ed-btn ed-btn--ghost" id="wiz-prev" disabled>← Previous</button>
+          <span class="spacer"></span>
+          <button class="ed-btn" id="wiz-reset-slide" title="Restore this slide to the repo version">Revert slide</button>
+          <button class="ed-btn ed-btn--primary" id="wiz-next">Save &amp; next →</button>
+        </div>
+      </section>
+
+      <section class="ed-wiz__preview">
+        <div class="ed-pane__head"><span>Live preview</span><span class="ed-pane__hint" id="wiz-preview-hint">—</span></div>
+        <div class="ed-wiz__preview-body">
+          <div class="ed-slide" id="wiz-slide"></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- WIZARD FINISH -->
+    <section class="ed-finish" id="finish" hidden>
+      <div class="ed-finish__inner">
+        <div class="ed-finish__icon">✓</div>
+        <h1>You're done!</h1>
+        <p class="ed-finish__lede">
+          <b id="fin-deck-name">—</b> · <span id="fin-edits-count">no</span> slide change(s).
+          Pick how you want the PowerPoint file delivered.
+        </p>
+        <div class="ed-finish__actions">
+          <a class="ed-finish__action ed-finish__action--primary" id="fin-commit" href="#" target="_blank" rel="noopener">
+            <b>📤 Commit on GitHub → get PPTX</b>
+            <span>One click commits your edits. A build runs (~1 min) and the new PPTX shows up on the Releases page.</span>
+          </a>
+          <button class="ed-finish__action" id="fin-download">
+            <b>⬇ Download markdown only</b>
+            <span>Save the edited .md file locally. Hand it to a teammate to build the PPTX.</span>
+          </button>
+          <a class="ed-finish__action" id="fin-release" href="#" target="_blank" rel="noopener">
+            <b>📦 Get the current PPTX</b>
+            <span>Grab the most recently built PPTX from Releases (won't include your edits until you commit).</span>
+          </a>
+        </div>
+        <div>
+          <button class="ed-btn ed-btn--ghost" id="fin-back" style="margin-right:8px">← Back to editing</button>
+          <button class="ed-btn ed-btn--ghost" id="fin-start-over">Start over with a different deck</button>
+        </div>
       </div>
+    </section>
+
+    <!-- ADVANCED MODE (code editor + preview) -->
+    <section class="ed-adv" id="advanced" hidden>
+      <section class="ed-adv__pane ed-adv__pane--left">
+        <div class="ed-pane__head"><span>Markdown source</span><span class="ed-pane__hint" id="adv-editor-hint">Auto-saves locally</span></div>
+        <textarea class="ed-editor" id="adv-editor" spellcheck="false" placeholder="Pick a deck from Guided mode first, or paste your own Marp markdown here."></textarea>
+        <div class="ed-adv__toolbar">
+          <button class="ed-btn" id="adv-copy">Copy</button>
+          <button class="ed-btn" id="adv-download">Download .md</button>
+          <button class="ed-btn ed-btn--ghost" id="adv-reset">Reset to repo</button>
+          <span class="spacer"></span>
+          <a id="adv-link-commit" target="_blank" rel="noopener">Commit on GitHub →</a>
+          <a id="adv-link-release" target="_blank" rel="noopener">Latest PPTX</a>
+          <a id="adv-link-actions" target="_blank" rel="noopener">Actions</a>
+        </div>
+      </section>
+      <section class="ed-adv__pane">
+        <div class="ed-pane__head"><span>Live preview</span><span class="ed-pane__hint" id="adv-preview-hint">—</span></div>
+        <div class="ed-adv__preview-wrap"><div class="ed-adv__preview" id="adv-preview"></div></div>
+      </section>
     </section>
   </main>
 
-  <!-- Floating help -->
-  <button class="ed-help__toggle" id="help-toggle" aria-label="Show usage help">?</button>
-  <aside class="ed-help" id="help">
-    <div class="ed-help__head">
-      <span>How this works</span>
-      <button class="ed-help__close" id="help-close" aria-label="Close help">×</button>
-    </div>
-    <div class="ed-help__body">
-      <p><strong>What this is.</strong> A browser editor for the three Microsoft Build 2026 customer decks. The preview uses the same Marp renderer that produces the live HTML on the site.</p>
-      <p><strong>Editing.</strong> Pick a deck, edit the markdown on the left, watch the preview update on the right. Changes auto-save to this browser (<code>localStorage</code>) — they survive a refresh but are local to you.</p>
-      <p><strong>Get a PPTX out — fully automated.</strong></p>
-      <ol>
-        <li>Edit the markdown here.</li>
-        <li>Click <strong>Commit on GitHub →</strong>. The GitHub web editor opens with your file pre-loaded; paste the content (already in your clipboard) and commit to <code>main</code>.</li>
-        <li>The <code>build-decks.yml</code> Action runs (~1 min), builds the <code>.pptx</code> and <code>.pdf</code>, and attaches them to the <strong>Latest PPTX</strong> release.</li>
-        <li>Click <strong>⬇ Latest PPTX</strong> to grab the freshly built file.</li>
-      </ol>
-      <p><strong>Local alternative.</strong> Click <strong>Download .md</strong>, then run <code>marp file.md --pptx</code> on your own machine.</p>
-      <p><strong>Reset</strong> reloads the canonical version from the repo and clears your local edits for that deck.</p>
-    </div>
-  </aside>
-
-  <!-- App logic -->
+  <!-- ────────── App logic ────────── -->
   <script type="module">
     import { Marp } from 'https://esm.sh/@marp-team/marp-core@4.2.0';
 
+    /* ─────────── Config ─────────── */
     const DECKS = [
-      { id: 'business', label: 'Business deck',         file: 'build-2026-customer-deck-business.md' },
-      { id: 'mixed',    label: 'Business + technical',  file: 'build-2026-customer-deck-mixed.md' },
-      { id: 'ai',       label: 'AI deck (legacy)',      file: 'build-2026-ai-customer-deck.md' },
+      {
+        id: 'business',
+        label: 'Business deck',
+        desc: 'Pure business framing — three lenses (AI · Data · Infrastructure), no engineering depth. Best for executive briefings.',
+        file: 'build-2026-customer-deck-business.md'
+      },
+      {
+        id: 'mixed',
+        label: 'Business + technical',
+        desc: 'Walks the same three lenses at both business and engineering depth. Best for architect and CTO conversations.',
+        file: 'build-2026-customer-deck-mixed.md'
+      },
+      {
+        id: 'ai',
+        label: 'AI announcements (legacy)',
+        desc: 'The original AI-only deck. Useful when the conversation is narrowly about Foundry, MAI, and agent runtime.',
+        file: 'build-2026-ai-customer-deck.md'
+      },
     ];
     const STORAGE_PREFIX = 'b26-deck::';
+    const REPO = detectRepo();
     const marp = new Marp({ html: true, inlineSVG: true });
 
-    const $ = (id) => document.getElementById(id);
-    const els = {
-      select:   $('deck-select'),
-      editor:   $('editor'),
-      preview:  $('preview'),
-      empty:    $('empty'),
-      status:   $('status'),
-      editorHint: $('editor-hint'),
-      previewHint: $('preview-hint'),
-      btnDownload: $('btn-download'),
-      btnReset:    $('btn-reset'),
-      btnCopy:     $('btn-copy'),
-      btnCommit:   $('btn-commit'),
-      ghLinks:     $('gh-links'),
-      linkActions: $('link-actions'),
-      linkRelease: $('link-release'),
-      help:        $('help'),
-      helpToggle:  $('help-toggle'),
-      helpClose:   $('help-close'),
-    };
-
-    /**
-     * Auto-detect the GitHub repo this site is served from.
-     * - On GitHub Pages: https://<owner>.github.io/<repo>/... → owner+repo
-     * - On a custom domain or localhost: leave empty (GH features hidden)
-     */
     function detectRepo() {
       const host = location.hostname;
       if (host.endsWith('.github.io')) {
         const owner = host.replace(/\.github\.io$/, '');
-        const path = location.pathname.split('/').filter(Boolean);
-        const repo = path[0];
+        const repo = location.pathname.split('/').filter(Boolean)[0];
         if (owner && repo) return { owner, repo, branch: 'main' };
       }
-      // Fall-back: hard-coded for this repo so the buttons work even from a custom domain.
       return { owner: 'heisenberg-alt', repo: 'build-2026', branch: 'main' };
     }
-    const REPO = detectRepo();
 
-    let current = null;            // current deck object
-    let originalSource = '';        // canonical text from the repo
-    let renderTimer = null;
-    let saveTimer = null;
-    let injectedStyleEl = null;     // <style> element for marp-emitted CSS, scoped to .ed-slide__inner
+    /* ─────────── DOM ─────────── */
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      status: $('status'),
+      modeWiz: $('mode-wizard'),
+      modeAdv: $('mode-advanced'),
 
-    /* ---------------- helpers ---------------- */
+      intro: $('intro'),
+      deckGrid: $('deck-grid'),
+
+      wiz: $('wizard'),
+      wizProgLabel: $('wiz-prog-label'),
+      wizProgPct: $('wiz-prog-pct'),
+      wizProgFill: $('wiz-prog-fill'),
+      wizList: $('wiz-list'),
+      wizStep: $('wiz-step'),
+      wizTitle: $('wiz-title'),
+      wizFields: $('wiz-fields'),
+      wizPrev: $('wiz-prev'),
+      wizNext: $('wiz-next'),
+      wizResetSlide: $('wiz-reset-slide'),
+      wizJumpFinish: $('wiz-jump-finish'),
+      wizSlide: $('wiz-slide'),
+      wizPreviewHint: $('wiz-preview-hint'),
+
+      finish: $('finish'),
+      finDeckName: $('fin-deck-name'),
+      finEditsCount: $('fin-edits-count'),
+      finCommit: $('fin-commit'),
+      finDownload: $('fin-download'),
+      finRelease: $('fin-release'),
+      finBack: $('fin-back'),
+      finStartOver: $('fin-start-over'),
+
+      adv: $('advanced'),
+      advEditor: $('adv-editor'),
+      advPreview: $('adv-preview'),
+      advPreviewHint: $('adv-preview-hint'),
+      advEditorHint: $('adv-editor-hint'),
+      advCopy: $('adv-copy'),
+      advDownload: $('adv-download'),
+      advReset: $('adv-reset'),
+      advLinkCommit: $('adv-link-commit'),
+      advLinkRelease: $('adv-link-release'),
+      advLinkActions: $('adv-link-actions'),
+    };
+
+    /* ─────────── State ─────────── */
+    const state = {
+      mode: 'wizard',          // 'wizard' | 'advanced'
+      view: 'intro',           // 'intro' | 'wiz' | 'finish' | 'adv'
+      deck: null,              // current deck object from DECKS
+      original: '',            // canonical .md from repo
+      source: '',              // currently-edited .md (full file)
+      slides: [],              // parsed slides — see parseDeck()
+      currentSlide: 0,         // index into slides
+      marpStyleEl: null,       // shared <style> for marp CSS
+      advRenderTimer: null,
+      advSaveTimer: null,
+    };
 
     function setStatus(text, kind) {
       els.status.textContent = text;
@@ -358,225 +583,650 @@
       if (kind) els.status.classList.add('is-' + kind);
     }
 
-    function populateDeckSelect() {
-      els.select.innerHTML = '<option value="">— Choose a deck —</option>' +
-        DECKS.map(d => `<option value="${d.id}">${d.label}</option>`).join('');
-    }
+    /* ─────────── Storage ─────────── */
+    function loadFromStorage(deck) { try { return localStorage.getItem(STORAGE_PREFIX + deck.id); } catch { return null; } }
+    function saveToStorage(deck, text) { try { localStorage.setItem(STORAGE_PREFIX + deck.id, text); return true; } catch { return false; } }
+    function clearStorage(deck) { try { localStorage.removeItem(STORAGE_PREFIX + deck.id); } catch {} }
 
+    /* ─────────── Deck loading ─────────── */
     async function fetchDeck(deck) {
       const res = await fetch(deck.file, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Could not load ${deck.file} (${res.status})`);
-      return await res.text();
+      const text = await res.text();
+      // Normalize line endings — Windows-checked-in files arrive as CRLF and break `---` matching.
+      return text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     }
 
-    function loadFromStorage(deck) {
-      try { return localStorage.getItem(STORAGE_PREFIX + deck.id); }
-      catch { return null; }
-    }
-    function saveToStorage(deck, text) {
-      try { localStorage.setItem(STORAGE_PREFIX + deck.id, text); return true; }
-      catch { return false; }
-    }
-    function clearStorage(deck) {
-      try { localStorage.removeItem(STORAGE_PREFIX + deck.id); } catch {}
-    }
-
-    /* ---------------- rendering ---------------- */
-
-    function renderPreview() {
-      if (!current) return;
-      const md = els.editor.value;
-      let result;
-      try { result = marp.render(md); }
-      catch (err) {
-        els.previewHint.textContent = 'Render error — see console';
-        console.error('[deck-editor] Marp render failed:', err);
-        return;
+    /* ─────────── Markdown → slide structure ─────────── */
+    /**
+     * Split the .md by top-level `---` separators (not the frontmatter).
+     * The first separated chunk is the frontmatter (between two `---`s at the top).
+     * Returns { frontmatter, slides: [{ raw, fields }] }
+     */
+    function parseDeck(md) {
+      const lines = md.split('\n');
+      let frontmatter = '';
+      let i = 0;
+      // Detect YAML frontmatter
+      if (lines[0] && lines[0].trim() === '---') {
+        const end = lines.indexOf('---', 1);
+        if (end > 0) {
+          frontmatter = lines.slice(0, end + 1).join('\n');
+          i = end + 1;
+          if (lines[i] === '') i++;       // skip the blank line right after frontmatter
+        }
       }
-      const { html, css } = result;
+      // Remaining lines, split on bare `---`
+      const remaining = lines.slice(i).join('\n');
+      const slideTexts = remaining.split(/\n---\n/).map(s => s.trim()).filter(Boolean);
 
-      els.empty.hidden = true;
-      els.preview.hidden = false;
-
-      // Marp's CSS is already scoped to `div.marpit > svg > foreignObject > section`,
-      // so we inject it as-is. No selector rewriting needed.
-      if (!injectedStyleEl) {
-        injectedStyleEl = document.createElement('style');
-        injectedStyleEl.id = 'marp-css';
-        document.head.appendChild(injectedStyleEl);
-      }
-      injectedStyleEl.textContent = css;
-
-      // Parse the full marpit-wrapped HTML and pull each <svg> out.
-      // Each SVG has viewBox="0 0 1280 720" so it scales perfectly inside a 16:9 tile.
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const marpitRoot = doc.querySelector('.marpit');
-      const svgs = marpitRoot ? Array.from(marpitRoot.querySelectorAll(':scope > svg')) : [];
-
-      els.preview.innerHTML = '';
-      svgs.forEach((svg, i) => {
-        const tile = document.createElement('div');
-        tile.className = 'ed-slide';
-
-        const num = document.createElement('span');
-        num.className = 'ed-slide__num';
-        num.textContent = `Slide ${i + 1} / ${svgs.length}`;
-        tile.appendChild(num);
-
-        // The CSS expects `div.marpit > svg > foreignObject > section` ancestry.
-        // Wrap each SVG in its own .marpit container so selectors match.
-        const wrap = document.createElement('div');
-        wrap.className = 'marpit';
-        const imported = document.importNode(svg, true);
-        imported.style.width = '100%';
-        imported.style.height = '100%';
-        imported.style.display = 'block';
-        wrap.appendChild(imported);
-        tile.appendChild(wrap);
-
-        els.preview.appendChild(tile);
+      const slides = slideTexts.map((raw, idx) => {
+        const fields = extractFields(raw);
+        const title = inferSlideTitle(raw, idx);
+        return { raw, original: raw, fields, title };
       });
-
-      els.previewHint.textContent = `${svgs.length} slide${svgs.length === 1 ? '' : 's'}`;
+      return { frontmatter, slides };
     }
 
-    function scheduleRender() {
-      clearTimeout(renderTimer);
-      renderTimer = setTimeout(renderPreview, 180);
-    }
-
-    function scheduleSave() {
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => {
-        if (!current) return;
-        const ok = saveToStorage(current, els.editor.value);
-        const dirty = els.editor.value !== originalSource;
-        setStatus(ok ? (dirty ? 'Edited · saved locally' : 'Matches repo') : 'Save failed',
-                  ok ? (dirty ? 'dirty' : 'saved') : 'error');
-      }, 250);
-    }
-
-    /* ---------------- actions ---------------- */
-
-    async function loadDeck(id) {
-      const deck = DECKS.find(d => d.id === id);
-      if (!deck) return;
-      current = deck;
-      setStatus('Loading…');
-      try {
-        originalSource = await fetchDeck(deck);
-      } catch (err) {
-        console.error(err);
-        setStatus('Load failed', 'error');
-        els.editor.value = `# Could not load ${deck.file}\n\n${err.message}\n\n` +
-          `If you're running this locally with file:// the browser will block fetch — start a static server:\n\n` +
-          `    npx serve .\n\nThen open http://localhost:3000/editor.html`;
-        return;
+    /** Best-effort short label for the sidebar. */
+    function inferSlideTitle(raw, idx) {
+      // First markdown heading (# / ## / ###)
+      const h = raw.match(/^(#{1,3})\s+(.+)$/m);
+      if (h) return stripInlineMd(h[2]);
+      // First strong text inside a <span class="pill">… or <h1>…
+      const pill = raw.match(/<span[^>]*class="pill[^"]*"[^>]*>([^<]+)<\/span>/);
+      if (pill) return pill[1];
+      // First non-blank, non-HTML, non-comment line
+      for (const line of raw.split('\n')) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('<!--') || t.startsWith('<')) continue;
+        return stripInlineMd(t).slice(0, 60);
       }
-      const stored = loadFromStorage(deck);
-      const text = stored ?? originalSource;
-      els.editor.value = text;
-      const dirty = text !== originalSource;
-      setStatus(dirty ? 'Loaded · local edits restored' : 'Loaded from repo', dirty ? 'dirty' : 'saved');
-      els.editorHint.textContent = stored ? 'Local edits restored' : 'Auto-saves to this browser';
-      updateGitHubLinks();
-      renderPreview();
+      return `Slide ${idx + 1}`;
     }
 
-    /* ---------------- GitHub integration ---------------- */
-
-    function updateGitHubLinks() {
-      if (!current || !REPO.owner) {
-        els.ghLinks.hidden = true;
-        els.btnCommit.disabled = true;
-        return;
-      }
-      els.ghLinks.hidden = false;
-      els.btnCommit.disabled = false;
-      els.linkActions.href = `https://github.com/${REPO.owner}/${REPO.repo}/actions/workflows/build-decks.yml`;
-      els.linkRelease.href = `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+    function stripInlineMd(s) {
+      return s.replace(/<\/?[^>]+>/g, '').replace(/[*_`]/g, '').trim();
     }
 
     /**
-     * Open the GitHub web editor for the current file. GitHub's in-browser
-     * editor can't pre-populate file contents via URL, so we copy the markdown
-     * to the clipboard first — the user pastes once on the GitHub page.
+     * Walks slide markdown and returns an ordered list of editable text spans:
+     *   { kind, label, value, start, end }
+     * `start`/`end` are character offsets into the slide's `raw` string,
+     * so we can splice replacements back in without touching surrounding HTML/CSS.
      */
-    async function commitOnGitHub() {
-      if (!current || !REPO.owner) return;
-      try {
-        await navigator.clipboard.writeText(els.editor.value);
-      } catch {
-        setStatus('Clipboard blocked — use Download instead', 'error');
-        return;
+    function extractFields(raw) {
+      const fields = [];
+      const lines = raw.split('\n');
+      let offset = 0;
+      let inCodeFence = false;
+      let headingCount = 0;
+      let paraCount = 0;
+      let bulletCount = 0;
+      let tableHeaderSeen = false;
+
+      // First: placeholder tokens like {{FOO}} anywhere in the file get their own field
+      // (these are the most important non-technical edits). We collect them after the
+      // line-by-line pass so the labels match the source order.
+
+      for (let li = 0; li < lines.length; li++) {
+        const line = lines[li];
+        const lineStart = offset;
+        const lineEnd = offset + line.length;
+
+        // Track code fences — treat their bodies as static
+        if (/^\s*```/.test(line)) { inCodeFence = !inCodeFence; offset = lineEnd + 1; continue; }
+        if (inCodeFence) { offset = lineEnd + 1; continue; }
+
+        // Marp directive comment — skip entirely
+        if (/^<!--/.test(line)) { offset = lineEnd + 1; continue; }
+
+        // ATX heading
+        const h = line.match(/^(\s*)(#{1,6})\s+(.+?)\s*$/);
+        if (h) {
+          headingCount++;
+          const text = h[3];
+          const textStart = lineStart + h[1].length + h[2].length + 1;       // after "## "
+          const textEnd = textStart + text.length;
+          const level = h[2].length;
+          fields.push({
+            kind: `h${level}`,
+            label: level === 1 ? `Title (H1)` : level === 2 ? `Subtitle (H2)` : `Eyebrow (H${level})`,
+            value: text, start: textStart, end: textEnd,
+            multiline: false,
+          });
+          offset = lineEnd + 1; continue;
+        }
+
+        // Blockquote
+        const bq = line.match(/^(\s*>\s+)(.+?)\s*$/);
+        if (bq) {
+          fields.push({
+            kind: 'quote', label: 'Quote / callout',
+            value: bq[2],
+            start: lineStart + bq[1].length, end: lineStart + bq[1].length + bq[2].length,
+            multiline: false,
+          });
+          offset = lineEnd + 1; continue;
+        }
+
+        // List item (- / * / +) — keep the leading "- " static
+        const li1 = line.match(/^(\s*[-*+]\s+)(.+?)\s*$/);
+        if (li1 && !line.startsWith('- ---')) {
+          bulletCount++;
+          fields.push({
+            kind: 'bullet', label: `Bullet ${bulletCount}`,
+            value: li1[2],
+            start: lineStart + li1[1].length, end: lineStart + li1[1].length + li1[2].length,
+            multiline: false,
+          });
+          offset = lineEnd + 1; continue;
+        }
+        // Numbered list
+        const li2 = line.match(/^(\s*\d+\.\s+)(.+?)\s*$/);
+        if (li2) {
+          bulletCount++;
+          fields.push({
+            kind: 'bullet', label: `List item ${bulletCount}`,
+            value: li2[2],
+            start: lineStart + li2[1].length, end: lineStart + li2[1].length + li2[2].length,
+            multiline: false,
+          });
+          offset = lineEnd + 1; continue;
+        }
+
+        // Table row
+        if (/^\s*\|/.test(line)) {
+          // Skip the alignment separator (|---|---|)
+          if (/^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(line)) {
+            tableHeaderSeen = true;
+            offset = lineEnd + 1; continue;
+          }
+          // Walk the line splitting on `|`, recording each cell's offset
+          const isHeader = !tableHeaderSeen;
+          let cursor = 0;
+          // Skip leading optional whitespace + `|`
+          while (cursor < line.length && line[cursor] !== '|') cursor++;
+          cursor++; // past leading |
+          let cellNo = 0;
+          while (cursor < line.length) {
+            // find next unescaped `|`
+            let next = cursor;
+            while (next < line.length && line[next] !== '|') next++;
+            const cellRaw = line.slice(cursor, next);
+            // Trim around the cell while remembering offsets
+            const trimmedStart = cursor + (cellRaw.length - cellRaw.trimStart().length);
+            const trimmedEnd = trimmedStart + cellRaw.trim().length;
+            const cellText = line.slice(trimmedStart, trimmedEnd);
+            if (cellText && /[A-Za-z0-9]/.test(stripInlineMd(cellText))) {
+              cellNo++;
+              fields.push({
+                kind: isHeader ? 'table-header' : 'table-cell',
+                label: isHeader ? `Column ${cellNo} header` : `Cell ${cellNo}`,
+                value: cellText,
+                start: lineStart + trimmedStart, end: lineStart + trimmedEnd,
+                multiline: false,
+              });
+            }
+            cursor = next + 1;
+          }
+          offset = lineEnd + 1; continue;
+        }
+
+        // HTML / inline mix: find text between tags on this line
+        if (/[<>]/.test(line) || /^\s*</.test(line)) {
+          // Find every >…< run with real letters, recording offsets.
+          const re = />([^<>]+)</g;
+          let m;
+          while ((m = re.exec(line)) !== null) {
+            const text = m[1];
+            if (!/[A-Za-z]/.test(text)) continue;     // skip whitespace-only / numeric-only
+            const trimmedStart = m.index + 1 + (text.length - text.trimStart().length);
+            const trimmedEnd = trimmedStart + text.trim().length;
+            const cleanText = line.slice(trimmedStart, trimmedEnd);
+            if (!cleanText) continue;
+            // Skip CSS-looking content (selectors with `:` or `;`)
+            if (/[{};]/.test(cleanText)) continue;
+            // Heuristic label
+            let label = 'Text';
+            const tagMatch = line.slice(0, m.index + 1).match(/<([a-zA-Z][a-zA-Z0-9]*)[^<]*$/);
+            if (tagMatch) {
+              const tag = tagMatch[1].toLowerCase();
+              if (tag === 'b' || tag === 'strong') label = 'Bold text';
+              else if (tag === 'em' || tag === 'i') label = 'Emphasis';
+              else if (tag === 'h1') label = 'Heading';
+              else if (tag === 'h2') label = 'Subheading';
+              else if (tag === 'h3' || tag === 'h4' || tag === 'h5') label = 'Section heading';
+              else if (tag === 'p') label = 'Paragraph';
+              else if (tag === 'li') label = 'List item';
+              else if (tag === 'span') {
+                // Look for the class on the opening tag
+                const cls = tagMatch[0].match(/class="([^"]+)"/);
+                if (cls && /pill/.test(cls[1])) label = 'Pill / badge';
+                else if (cls && /lens-num/.test(cls[1])) label = 'Lens number';
+                else label = 'Text';
+              }
+            }
+            fields.push({
+              kind: 'inline-html', label,
+              value: cleanText,
+              start: lineStart + trimmedStart, end: lineStart + trimmedEnd,
+              multiline: cleanText.length > 80,
+            });
+          }
+          offset = lineEnd + 1; continue;
+        }
+
+        // Plain paragraph line (text outside any HTML)
+        if (line.trim()) {
+          paraCount++;
+          const leading = line.match(/^\s*/)[0].length;
+          fields.push({
+            kind: 'paragraph', label: `Paragraph ${paraCount}`,
+            value: line.slice(leading).trim(),
+            start: lineStart + leading, end: lineStart + leading + line.slice(leading).trim().length,
+            multiline: line.length > 90,
+          });
+        }
+        offset = lineEnd + 1;
       }
-      setStatus('Markdown copied → paste on GitHub', 'saved');
-      const url = `https://github.com/${REPO.owner}/${REPO.repo}/edit/${REPO.branch}/${current.file}`;
-      window.open(url, '_blank', 'noopener');
+
+      // Placeholders ({{FOO}}) — promote each to its own labelled field, overlaying any
+      // existing fields they sit inside (we filter overlaps out of the existing list).
+      const placeholderRe = /\{\{([A-Z0-9_\-]+)\}\}/g;
+      let pm;
+      const placeholderFields = [];
+      while ((pm = placeholderRe.exec(raw)) !== null) {
+        placeholderFields.push({
+          kind: 'placeholder',
+          label: pm[1].replace(/_/g, ' ').toLowerCase()
+            .replace(/\b\w/g, c => c.toUpperCase()),
+          value: pm[0],
+          start: pm.index,
+          end: pm.index + pm[0].length,
+          multiline: false,
+          isPlaceholder: true,
+        });
+      }
+      // Drop overlapping non-placeholder fields and replace with the placeholder spans
+      const finalFields = fields.filter(f => !placeholderFields.some(p => overlaps(f, p)));
+      for (const p of placeholderFields) finalFields.push(p);
+      finalFields.sort((a, b) => a.start - b.start);
+      return finalFields;
+    }
+    function overlaps(a, b) { return !(a.end <= b.start || b.end <= a.start); }
+
+    /** Splice the current `value` of each field back into the slide's raw text. */
+    function rebuildSlide(slide) {
+      // Fields are non-overlapping (we sorted + filtered overlaps). Walk in order.
+      const sorted = [...slide.fields].sort((a, b) => a.start - b.start);
+      let out = '';
+      let cursor = 0;
+      for (const f of sorted) {
+        out += slide.raw.slice(cursor, f.start) + f.value;
+        cursor = f.end;
+      }
+      out += slide.raw.slice(cursor);
+      return out;
     }
 
-    function downloadEdited() {
-      if (!current) return;
-      const blob = new Blob([els.editor.value], { type: 'text/markdown;charset=utf-8' });
+    function rebuildDeck() {
+      if (!state.slides.length) return state.source;
+      const newSlides = state.slides.map(rebuildSlide);
+      return state.frontmatter + '\n\n' + newSlides.join('\n\n---\n\n') + '\n';
+    }
+
+    /* ─────────── Marp rendering ─────────── */
+    function ensureMarpStyle() {
+      if (state.marpStyleEl) return state.marpStyleEl;
+      const el = document.createElement('style');
+      el.id = 'marp-css';
+      document.head.appendChild(el);
+      state.marpStyleEl = el;
+      return el;
+    }
+
+    /** Render `md` and return Array<SVGElement>, plus inject CSS. */
+    function renderSlidesToSvgs(md) {
+      const { html, css } = marp.render(md);
+      ensureMarpStyle().textContent = css;
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const marpit = doc.querySelector('.marpit');
+      return marpit ? Array.from(marpit.querySelectorAll(':scope > svg')) : [];
+    }
+
+    function svgIntoTile(svg, tile) {
+      tile.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'marpit';
+      const imported = document.importNode(svg, true);
+      imported.style.width = '100%'; imported.style.height = '100%'; imported.style.display = 'block';
+      wrap.appendChild(imported);
+      tile.appendChild(wrap);
+    }
+
+    /* ─────────── INTRO (deck picker) ─────────── */
+    function renderIntro() {
+      els.deckGrid.innerHTML = '';
+      for (const d of DECKS) {
+        const stored = loadFromStorage(d);
+        const card = document.createElement('button');
+        card.className = 'ed-deck-card';
+        card.innerHTML = `
+          <span class="ed-deck-card__name">${d.label}</span>
+          <span class="ed-deck-card__desc">${d.desc}</span>
+          <span class="ed-deck-card__meta">${d.file}${stored ? ' · local edits available' : ''}</span>`;
+        card.addEventListener('click', () => loadDeckAndStartWizard(d.id));
+        els.deckGrid.appendChild(card);
+      }
+    }
+
+    /* ─────────── WIZARD ─────────── */
+    async function loadDeckAndStartWizard(id) {
+      const deck = DECKS.find(d => d.id === id);
+      if (!deck) return;
+      setStatus('Loading deck…');
+      try {
+        state.original = await fetchDeck(deck);
+      } catch (err) {
+        console.error(err);
+        setStatus('Load failed', 'error');
+        alert('Could not load deck. If running locally, start a static server (e.g. `npx serve .`).');
+        return;
+      }
+      state.deck = deck;
+      state.source = loadFromStorage(deck) ?? state.original;
+      const parsed = parseDeck(state.source);
+      state.frontmatter = parsed.frontmatter;
+      state.slides = parsed.slides;
+      state.currentSlide = 0;
+      setStatus(state.source === state.original ? 'Loaded' : 'Loaded · local edits restored',
+                state.source === state.original ? 'saved' : 'dirty');
+      showWizardView();
+      renderWizardList();
+      renderWizardSlide();
+      // also push to advanced editor so a toggle works seamlessly
+      els.advEditor.value = state.source;
+    }
+
+    function renderWizardList() {
+      els.wizList.innerHTML = '';
+      state.slides.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.className = 'ed-wiz__item' + (i === state.currentSlide ? ' is-active' : '');
+        b.innerHTML = `<span class="ed-wiz__item-num">${i + 1}</span><span class="ed-wiz__item-label">${escapeHtml(s.title)}</span>`;
+        b.addEventListener('click', () => { state.currentSlide = i; renderWizardSlide(); renderWizardList(); });
+        els.wizList.appendChild(b);
+      });
+    }
+
+    function renderWizardSlide() {
+      const n = state.slides.length;
+      const i = state.currentSlide;
+      const slide = state.slides[i];
+      const pct = Math.round(((i + 1) / n) * 100);
+      els.wizProgLabel.textContent = `Slide ${i + 1} of ${n}`;
+      els.wizProgPct.textContent = `${pct}%`;
+      els.wizProgFill.style.width = pct + '%';
+      els.wizStep.textContent = `Slide ${i + 1} of ${n}`;
+      els.wizTitle.textContent = slide.title;
+      els.wizPrev.disabled = i === 0;
+      els.wizNext.textContent = i === n - 1 ? 'Finish →' : 'Save & next →';
+
+      // Build the form for this slide
+      els.wizFields.innerHTML = '';
+      if (slide.fields.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'ed-wiz__empty';
+        empty.innerHTML = '<b>No editable text on this slide.</b>This is usually a section divider or a visual-only slide. Move on with <em>Next</em>.';
+        els.wizFields.appendChild(empty);
+      } else {
+        for (const field of slide.fields) {
+          els.wizFields.appendChild(buildFieldRow(field));
+        }
+      }
+      // Render the live single-slide preview
+      renderWizardPreview();
+    }
+
+    function buildFieldRow(field) {
+      const wrap = document.createElement('div');
+      wrap.className = 'ed-field';
+
+      const label = document.createElement('label');
+      label.className = 'ed-field__label';
+      label.innerHTML = `<span>${escapeHtml(field.label)}</span><span class="ed-field__kind is-${field.kind}">${field.kind}</span>`;
+      wrap.appendChild(label);
+
+      const useTextarea = field.multiline || field.value.length > 80 || /\n/.test(field.value);
+      const input = document.createElement(useTextarea ? 'textarea' : 'input');
+      input.className = 'ed-field__' + (useTextarea ? 'textarea' : 'input')
+        + (field.kind === 'h1' ? ' is-h1' : '')
+        + (field.kind === 'h2' ? ' is-h2' : '')
+        + (field.isPlaceholder ? ' is-placeholder' : '');
+      if (!useTextarea) input.type = 'text';
+      input.value = field.value;
+      if (field.isPlaceholder) {
+        input.placeholder = field.value;
+        if (field.value === field.value.toUpperCase()) input.value = ''; // empty for true {{TOKEN}} pristine
+      }
+      input.addEventListener('input', () => {
+        field.value = input.value;
+        scheduleWizardPreviewRender();
+        markDirty();
+      });
+      wrap.appendChild(input);
+      return wrap;
+    }
+
+    let wizPreviewTimer = null;
+    function scheduleWizardPreviewRender() {
+      clearTimeout(wizPreviewTimer);
+      wizPreviewTimer = setTimeout(renderWizardPreview, 180);
+    }
+    function renderWizardPreview() {
+      const slide = state.slides[state.currentSlide];
+      // Render the whole deck so Marp's CSS sees the full doc, then pick only the current slide.
+      // The full source we render is: frontmatter + this slide only.
+      const md = state.frontmatter + '\n\n' + rebuildSlide(slide) + '\n';
+      try {
+        const svgs = renderSlidesToSvgs(md);
+        if (svgs.length) {
+          svgIntoTile(svgs[0], els.wizSlide);
+          els.wizPreviewHint.textContent = `1280 × 720 · slide ${state.currentSlide + 1} of ${state.slides.length}`;
+        }
+      } catch (err) {
+        els.wizPreviewHint.textContent = 'Render error';
+        console.error('[wizard] render failed:', err);
+      }
+    }
+
+    function markDirty() {
+      // Persist the rebuilt full source to localStorage and to the advanced editor mirror
+      state.source = rebuildDeck();
+      saveToStorage(state.deck, state.source);
+      els.advEditor.value = state.source;
+      setStatus('Edited · saved locally', 'dirty');
+    }
+
+    function showWizardView() {
+      state.view = 'wiz';
+      els.intro.hidden = true; els.finish.hidden = true; els.adv.hidden = true;
+      els.wiz.hidden = false;
+    }
+    function showIntroView() {
+      state.view = 'intro';
+      els.wiz.hidden = true; els.finish.hidden = true; els.adv.hidden = true;
+      els.intro.hidden = false;
+      renderIntro();
+    }
+    function showFinishView() {
+      state.view = 'finish';
+      els.intro.hidden = true; els.wiz.hidden = true; els.adv.hidden = true;
+      els.finish.hidden = false;
+      const editCount = state.slides.filter(s => rebuildSlide(s) !== s.original).length;
+      els.finDeckName.textContent = state.deck ? state.deck.label : '';
+      els.finEditsCount.textContent = editCount === 0 ? 'no' : String(editCount);
+      // Wire up the actions
+      els.finCommit.href = state.deck
+        ? `https://github.com/${REPO.owner}/${REPO.repo}/edit/${REPO.branch}/${state.deck.file}` : '#';
+      els.finRelease.href = `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+    }
+
+    /* ─────────── ADVANCED MODE ─────────── */
+    function showAdvancedView() {
+      state.view = 'adv';
+      els.intro.hidden = true; els.wiz.hidden = true; els.finish.hidden = true;
+      els.adv.hidden = false;
+      els.advEditor.value = state.source || '';
+      renderAdvPreview();
+      updateAdvLinks();
+    }
+    function updateAdvLinks() {
+      if (!state.deck || !REPO.owner) return;
+      els.advLinkCommit.href = `https://github.com/${REPO.owner}/${REPO.repo}/edit/${REPO.branch}/${state.deck.file}`;
+      els.advLinkActions.href = `https://github.com/${REPO.owner}/${REPO.repo}/actions/workflows/build-decks.yml`;
+      els.advLinkRelease.href = `https://github.com/${REPO.owner}/${REPO.repo}/releases/tag/latest-decks`;
+    }
+    function renderAdvPreview() {
+      els.advPreview.innerHTML = '';
+      if (!els.advEditor.value) { els.advPreviewHint.textContent = '—'; return; }
+      try {
+        const svgs = renderSlidesToSvgs(els.advEditor.value);
+        svgs.forEach((svg, i) => {
+          const tile = document.createElement('div');
+          tile.className = 'ed-slide';
+          const num = document.createElement('span');
+          num.className = 'ed-slide__num';
+          num.textContent = `${i + 1} / ${svgs.length}`;
+          tile.appendChild(num);
+          svgIntoTile(svg, tile);
+          // svgIntoTile clears innerHTML before appending; re-add the number badge after.
+          tile.prepend(num);
+          els.advPreview.appendChild(tile);
+        });
+        els.advPreviewHint.textContent = `${svgs.length} slide${svgs.length === 1 ? '' : 's'}`;
+      } catch (err) {
+        console.error(err);
+        els.advPreviewHint.textContent = 'Render error';
+      }
+    }
+
+    /* ─────────── Helpers ─────────── */
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+    function downloadCurrent() {
+      if (!state.deck) return;
+      const blob = new Blob([state.source], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = current.file;
-      document.body.appendChild(a); a.click();
-      a.remove(); URL.revokeObjectURL(url);
+      a.href = url; a.download = state.deck.file;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
       setStatus('Downloaded', 'saved');
     }
 
-    async function copyEdited() {
-      if (!current) return;
-      try {
-        await navigator.clipboard.writeText(els.editor.value);
-        setStatus('Copied to clipboard', 'saved');
-      } catch {
-        setStatus('Copy failed', 'error');
+    /* ─────────── Wire-up ─────────── */
+    // Mode toggle
+    els.modeWiz.addEventListener('click', () => {
+      if (state.view === 'adv') {
+        // Coming back from advanced — try to reparse the source so wizard reflects edits
+        try {
+          const p = parseDeck(els.advEditor.value || state.source);
+          state.frontmatter = p.frontmatter;
+          state.slides = p.slides;
+          state.source = els.advEditor.value || state.source;
+          saveToStorage(state.deck, state.source);
+        } catch (err) { console.warn('Reparse failed', err); }
       }
-    }
+      els.modeWiz.classList.add('is-active'); els.modeAdv.classList.remove('is-active');
+      els.modeWiz.setAttribute('aria-selected', 'true'); els.modeAdv.setAttribute('aria-selected', 'false');
+      state.mode = 'wizard';
+      if (!state.deck) showIntroView();
+      else { showWizardView(); renderWizardList(); renderWizardSlide(); }
+    });
+    els.modeAdv.addEventListener('click', () => {
+      els.modeAdv.classList.add('is-active'); els.modeWiz.classList.remove('is-active');
+      els.modeAdv.setAttribute('aria-selected', 'true'); els.modeWiz.setAttribute('aria-selected', 'false');
+      state.mode = 'advanced';
+      showAdvancedView();
+    });
 
-    async function resetDeck() {
-      if (!current) return;
-      if (!confirm(`Reset "${current.label}" to the version in the repo and discard your local edits?`)) return;
-      clearStorage(current);
-      els.editor.value = originalSource;
+    // Wizard nav
+    els.wizPrev.addEventListener('click', () => {
+      if (state.currentSlide > 0) { state.currentSlide--; renderWizardSlide(); renderWizardList(); }
+    });
+    els.wizNext.addEventListener('click', () => {
+      if (state.currentSlide < state.slides.length - 1) {
+        state.currentSlide++; renderWizardSlide(); renderWizardList();
+      } else {
+        showFinishView();
+      }
+    });
+    els.wizJumpFinish.addEventListener('click', () => showFinishView());
+    els.wizResetSlide.addEventListener('click', () => {
+      const slide = state.slides[state.currentSlide];
+      if (!confirm(`Restore slide "${slide.title}" to the version in the repo? This slide's edits will be lost.`)) return;
+      slide.raw = slide.original;
+      slide.fields = extractFields(slide.original);
+      markDirty();
+      renderWizardSlide();
+    });
+
+    // Finish actions
+    els.finDownload.addEventListener('click', downloadCurrent);
+    els.finCommit.addEventListener('click', async (e) => {
+      // Copy markdown to clipboard first, then let the link open in a new tab
+      try { await navigator.clipboard.writeText(state.source); }
+      catch { /* clipboard blocked — link still opens */ }
+      setStatus('Markdown copied → paste on GitHub', 'saved');
+    });
+    els.finBack.addEventListener('click', () => { showWizardView(); renderWizardList(); renderWizardSlide(); });
+    els.finStartOver.addEventListener('click', () => {
+      state.deck = null; state.slides = []; state.source = ''; state.original = '';
+      state.currentSlide = 0;
+      showIntroView();
+    });
+
+    // Advanced editor
+    els.advEditor.addEventListener('input', () => {
+      clearTimeout(state.advRenderTimer);
+      state.advRenderTimer = setTimeout(renderAdvPreview, 200);
+      clearTimeout(state.advSaveTimer);
+      state.advSaveTimer = setTimeout(() => {
+        if (state.deck) saveToStorage(state.deck, els.advEditor.value);
+        state.source = els.advEditor.value;
+        setStatus('Edited (advanced) · saved locally', 'dirty');
+      }, 250);
+    });
+    els.advCopy.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(els.advEditor.value); setStatus('Copied to clipboard', 'saved'); }
+      catch { setStatus('Copy failed', 'error'); }
+    });
+    els.advDownload.addEventListener('click', () => {
+      if (!state.deck) { setStatus('No deck loaded', 'error'); return; }
+      state.source = els.advEditor.value;
+      downloadCurrent();
+    });
+    els.advReset.addEventListener('click', () => {
+      if (!state.deck) return;
+      if (!confirm(`Restore "${state.deck.label}" to the version in the repo?`)) return;
+      clearStorage(state.deck);
+      els.advEditor.value = state.original;
+      state.source = state.original;
+      const p = parseDeck(state.original);
+      state.frontmatter = p.frontmatter; state.slides = p.slides;
+      renderAdvPreview();
       setStatus('Reset to repo version', 'saved');
-      els.editorHint.textContent = 'Auto-saves to this browser';
-      renderPreview();
-    }
-
-    /* ---------------- wire-up ---------------- */
-
-    populateDeckSelect();
-
-    els.select.addEventListener('change', (e) => {
-      if (e.target.value) loadDeck(e.target.value);
     });
-    els.editor.addEventListener('input', () => { scheduleRender(); scheduleSave(); });
-    els.btnDownload.addEventListener('click', downloadEdited);
-    els.btnCopy.addEventListener('click', copyEdited);
-    els.btnReset.addEventListener('click', resetDeck);
-    els.btnCommit.addEventListener('click', commitOnGitHub);
-    els.helpToggle.addEventListener('click', () => els.help.classList.toggle('is-open'));
-    els.helpClose.addEventListener('click', () => els.help.classList.remove('is-open'));
 
-    // Auto-load deck via ?deck=business|mixed|ai
+    // Boot
+    showIntroView();
+    setStatus('Ready');
+
+    // Auto-load via ?deck=
     const initial = new URLSearchParams(location.search).get('deck');
-    if (initial && DECKS.some(d => d.id === initial)) {
-      els.select.value = initial;
-      loadDeck(initial);
-    }
-
-    // Warn before leaving with unsaved changes that haven't been downloaded
-    window.addEventListener('beforeunload', (e) => {
-      if (current && els.editor.value !== originalSource) {
-        // localStorage already persists, but remind users their .md isn't downloaded
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    });
+    if (initial && DECKS.some(d => d.id === initial)) loadDeckAndStartWizard(initial);
   </script>
 </body>
 </html>
