@@ -59,10 +59,10 @@ jobs:
           echo "Building: $files"
 
       - name: Build PPTX (rasterized, matches the live HTML)
-        run: marp --pptx --allow-local-files ${{ steps.files.outputs.files }}
+        run: marp --pptx --html --allow-local-files ${{ steps.files.outputs.files }}
 
       - name: Build PDF
-        run: marp --pdf --allow-local-files ${{ steps.files.outputs.files }}
+        run: marp --pdf --html --allow-local-files ${{ steps.files.outputs.files }}
 
       - name: List build outputs
         run: ls -lh build-2026-*.pptx build-2026-*.pdf 2>/dev/null || true
